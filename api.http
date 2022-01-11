@@ -1,0 +1,11 @@
+###
+# @name get_status
+GET http://localhost:5397/rest/shop/workshop/status
+
+###
+# @name get_navigation_state
+GET http://localhost:5397/navigation/state
+
+###
+# @name shutdown_game
+POST http://localhost:5397/rest/start/quitGame

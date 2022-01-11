@@ -1,0 +1,21 @@
+.TrackMap {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.TrackMap svg {
+  max-height: 100%;
+  object-fit: contain;
+  overflow: visible;
+}
+
+.TrackPath {
+  fill: none;
+  stroke: black;
+  stroke-width: 0.15em;
+}

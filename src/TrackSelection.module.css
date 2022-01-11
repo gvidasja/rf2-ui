@@ -1,0 +1,46 @@
+.TrackSelection {
+  height: 90vh;
+  min-width: 60vw;
+  max-width: 1400px;
+  display: grid;
+  grid-template-rows: auto 40vh 1fr;
+  grid-template-columns: 2fr 2fr 3fr;
+  background: white;
+}
+
+.TrackTypes {
+  display: none;
+  grid-column: 1;
+  grid-column-end: all;
+  grid-row: 1;
+}
+
+.Tracks {
+  padding: 1em;
+  overflow-y: auto;
+  grid-column: 1;
+  grid-row: 2;
+  grid-row-end: 4;
+}
+
+.Layouts {
+  padding: 1em;
+  overflow-y: auto;
+  grid-column: 2;
+  grid-row: 2;
+  grid-row-end: 4;
+}
+
+.Selected {
+  background: red;
+}
+
+.Thumbnail {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.Description {
+  grid-column: 3;
+  grid-row: 3;
+}

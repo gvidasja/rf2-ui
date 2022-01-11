@@ -1,0 +1,39 @@
+html,
+html > body {
+  background: white;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.MenuItem {
+  cursor: pointer;
+  padding: 6px;
+  border: solid 0.15em transparent;
+  box-sizing: border-box;
+}
+
+.MenuItem:hover {
+  border: solid 0.15em red;
+}
+
+.FitImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.FitImage img,
+.FitImage svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
