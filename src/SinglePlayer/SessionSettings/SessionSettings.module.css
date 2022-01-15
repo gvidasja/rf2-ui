@@ -1,0 +1,6 @@
+.Settings {
+  display: grid;
+  grid-template-columns: max-content max-content 10em max-content;
+  row-gap: 2px;
+  column-gap: 6px;
+}

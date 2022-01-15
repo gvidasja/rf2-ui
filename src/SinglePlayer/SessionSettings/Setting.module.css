@@ -1,0 +1,16 @@
+.Disabled {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.Center {
+  display: flex;
+  align-items: center;
+}
+
+.Label {
+  justify-content: flex-end;
+}
+
+.ValueLabel {
+  justify-content: center;
+}

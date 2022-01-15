@@ -1,0 +1,28 @@
+.AppContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.BackgroundImage {
+  z-index: -1;
+  filter: blur(3px);
+  position: fixed;
+  height: 130%;
+  width: 130%;
+}
+
+.TopMenu {
+  display: flex;
+}
+
+.Left {
+  flex-grow: 1;
+}
+
+.Right {
+  align-self: flex-end;
+}

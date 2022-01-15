@@ -20,6 +20,7 @@ Set-Content -Path temp\newmain.js -Value ($hookFileContent | %{$_.Replace("//%%%
 Copy-Item -Force temp\newmain.js "temp\new\static\framework\$mainFile"
 Remove-Item "temp\new\static\framework\better-ui" -Force -Recurse -ErrorAction Ignore
 Copy-Item "build\static" -force -recurse "temp\new\static\framework\better-ui"
+Copy-Item "build\assets" -force -recurse "temp\new\static\framework\better-ui"
 
 Compress-Archive -Force -Path temp\new\* temp\net.rfactor2.ui.framework.zip
 

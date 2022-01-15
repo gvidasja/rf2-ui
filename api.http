@@ -9,3 +9,45 @@ GET http://localhost:5397/navigation/state
 ###
 # @name shutdown_game
 POST http://localhost:5397/rest/start/quitGame
+
+###
+# @name get_sessions_settings
+GET http://localhost:5397/rest/sessions
+
+###
+# @name update_param
+POST http://localhost:5397/rest/sessions/settings
+Content-Type: application/json
+
+{
+    "sessionSetting": "SESSSET_warmup_starting_time",
+    "value": 1
+}
+
+###
+# @name get_sessions
+GET http://localhost:5397/rest/sessions/amount
+
+###
+# @name get_weather
+GET http://localhost:5397/rest/sessions/weather
+
+###
+# @name get_oponents
+GET http://localhost:5397/rest/sessions/opponents
+
+###
+# @name get_oponents
+GET http://localhost:5397/rest/sessions/opponents/filter
+
+###
+# @name set_session_count
+POST http://localhost:5397/rest/sessions/practice/sessions
+Content-Type: text/plain
+
+3
+
+###
+# @name get_setting_value
+GET http://localhost:5397/rest/sessions/setting/SESSSET_race_time
+
