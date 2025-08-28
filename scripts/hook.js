@@ -5,19 +5,25 @@
   }
 
   if (betterUi.enabled) {
+    console.log('PREPING NEW UI')
     const r = console.log
     window.require = r
     window.require.config = r
     window.requirejs = r
   } else {
+    console.log('LOADING OLD UI')
     //%%%INJECT
   }
 
   window.addEventListener('load', onLoad)
 
   function onLoad() {
+    console.log('LOADING BETTER UI HOOKS')
+
     try {
       if (betterUi.enabled) {
+        console.log('LOADING NEw UI')
+
         document.head.querySelectorAll('link').forEach((l) => document.head.removeChild(l))
         for (const c of document.body.children) {
           document.body.removeChild(c)
@@ -53,8 +59,8 @@
     const enabled = window.localStorage.getItem(setting) === 'true'
     const el = document.createElement('div')
     el.innerText = `${name} ${enabled ? 'ON' : 'OFF'}`
-    el.addEventListener('click', () => {
-      if (confirm(`${enabled ? 'Disable' : 'Enable'} ${name}`)) {
+    el.addEventListener('click', async () => {
+      if (await confirmChoice(`${enabled ? 'Disable' : 'Enable'} ${name}`)) {
         window.localStorage.setItem(setting, !enabled)
         window.location.reload()
       }
@@ -75,5 +81,30 @@
     link.rel = 'stylesheet'
     link.href = href
     document.head.appendChild(link)
+  }
+
+  async function confirmChoice(question) {
+    return new Promise((resolve) => {
+      const dialogOverlay = document.createElement('div')
+      const dialog = document.createElement('div')
+      const ok = document.createElement('button')
+      const cancel = document.createElement('button')
+
+      ok.addEventListener('click', () => resolve(true))
+      cancel.addEventListener('click', () => resolve(false))
+
+      dialog.innerText = question
+      ok.innerText = 'OK'
+      cancel.innerText = 'Cancel'
+
+      dialogOverlay.style =
+        'z-index: 1000; position: fixed; top: 0; left: 0; bottom: 0; right: 0; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.2);'
+      dialog.style = 'background: white;'
+
+      dialog.appendChild(ok)
+      dialog.appendChild(cancel)
+      dialogOverlay.appendChild(dialog)
+      document.body.appendChild(dialogOverlay)
+    })
   }
 })()

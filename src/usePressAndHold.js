@@ -4,11 +4,14 @@ export function usePressAndHold(callback = () => {}, interval = 300, delay = 0) 
   const [startLongPress, setStartLongPress] = useState(false)
   const [refresh, setRefresh] = useState(Date.now())
 
-  useEffect(() => {
-    if (startLongPress) {
-      callback()
-    }
-  }, [refresh])
+  useEffect(
+    () => {
+      if (startLongPress) {
+        callback()
+      }
+    },
+    /* eslint-disable */ [refresh] /* eslint-enable */,
+  )
 
   useEffect(() => {
     let timeoutId

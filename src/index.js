@@ -1,5 +1,4 @@
-import 'react-app-polyfill/ie9'
-import 'react-app-polyfill/stable'
+import './polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
@@ -10,10 +9,10 @@ font.rel = 'stylesheet'
 font.href = process.env.REACT_APP_ASSET_PATH + 'ubuntu-v14-latin-regular.css'
 document.head.appendChild(font)
 
-// console.error = (...msg) => alert(...msg)
-// console.log = (...msg) => alert(...msg)
-// console.warn = (...msg) => alert(...msg)
-// window.onerror = (...msg) => alert(...msg)
+console.error = (...msg) => alert(...msg)
+console.log = (...msg) => alert(...msg)
+console.warn = (...msg) => alert(...msg)
+window.onerror = (...msg) => alert(...msg)
 
 ReactDOM.render(
   <React.StrictMode>

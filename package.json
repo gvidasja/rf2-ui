@@ -7,7 +7,6 @@
     "test": "react-scripts test",
     "prettier": "prettier --write \"./src/**/*.{ts,js,html,scss}\"",
     "prettier:check": "prettier --list-different \"./src/**/*.{ts,js,html,scss}\"",
-    "postinstalll": "npm run prettier -s && husky install",
     "build.scripts": "tsc --project scripts/tsconfig.json",
     "build.all": "ts-node  --project utils/tsconfig.json utils/builder.ts"
   },
@@ -41,9 +40,16 @@
       "not op_mini all"
     ],
     "development": [
+      "ie 11",
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.88",
+    "@types/react-dom": "^17.0.26",
+    "@types/react-router": "^5.1.20",
+    "@types/react-router-dom": "^5.3.3"
   }
 }

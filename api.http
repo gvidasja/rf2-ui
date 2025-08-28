@@ -41,6 +41,16 @@ GET http://localhost:5397/rest/sessions/opponents
 GET http://localhost:5397/rest/sessions/opponents/filter
 
 ###
+# @name set_opponents
+POST http://localhost:5397/rest/sessions/opponents
+Content-Type: application/json
+
+{
+    "state": 1,
+    "vectorIndex": 1
+}
+
+###
 # @name set_session_count
 POST http://localhost:5397/rest/sessions/practice/sessions
 Content-Type: text/plain
@@ -51,3 +61,56 @@ Content-Type: text/plain
 # @name get_setting_value
 GET http://localhost:5397/rest/sessions/setting/SESSSET_race_time
 
+###
+# @name kick_ai
+POST http://localhost:5397/rest/sessions/ai/kick/11
+
+###
+# @name add_ai
+POST http://localhost:5397/rest/sessions/ai/add
+
+###
+# @name get_ai
+GET http://localhost:5397/rest/sessions/standings
+
+###
+# @name get_standings
+GEt http://localhost:5397/rest/watch/standings
+
+###
+# @name get_standings
+GEt http://localhost:5397/rest/watch/standings/history
+
+###
+# @name get_cars
+http://localhost:5397/rest/race/car
+
+###
+# @name get_state
+GET http://localhost:5397/navigation/state
+
+
+###
+# @name drive
+POST http://localhost:5397/rest/garage/drive
+
+###
+# @name start_race
+POST http://localhost:5397/rest/race/startRace
+
+###
+# @name stop_race
+POST http://localhost:5397/rest/garage/toRaceMenu
+
+###
+# @name get_classes
+GEt http://localhost:5397/framework/json/vehicle_classes.json
+
+###
+# @name get_opponents_filter
+GET http://localhost:5397/rest/sessions/opponents/filter
+
+
+###
+# @name get_opponents
+GET http://localhost:5397/rest/sessions/opponents

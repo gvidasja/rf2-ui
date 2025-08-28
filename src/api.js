@@ -53,27 +53,91 @@ function getSessionsAmount() {
   )
 }
 
+export function getOpponents() {
+  return get('/rest/sessions/opponents')
+}
+
+export function getOpponentFilter() {
+  return get('/rest/sessions/opponents/filter')
+}
+
+export function updateOpponentFilter({ state, vectorIndex }) {
+  return postJSON('/rest/sessions/opponents', { state, vectorIndex })
+}
+
 export function quitGame() {
   return post('/rest/start/quitGame')
 }
 
+export function startRace() {
+  return post('/rest/race/startRace')
+}
+
+export function getState() {
+  return get('/navigation/state')
+}
+
+export function getHistory() {
+  return get('/rest/watch/standings/history')
+}
+
+export function getStandings() {
+  return get('/rest/watch/standings')
+}
+
+export function drive() {
+  return post('/rest/garage/drive')
+}
+
+export function kickAi(id) {
+  return post(`/rest/sessions/ai/kick/${id}`)
+}
+
+export function addAi() {
+  return post('/rest/sessions/ai/add')
+}
+
+export function stopRace() {
+  return post('/rest/garage/toRaceMenu')
+}
+
 function get(url) {
-  return fetch(url).then(handleResponse)
+  return withRetry(() => fetch(url).then(handleResponse))
 }
 
 function post(url, data) {
-  return fetch(url, { method: 'post', body: data }).then(handleResponse)
+  return withRetry(() => fetch(url, { method: 'post', body: data }).then(handleResponse))
 }
 
 function postJSON(url, data) {
-  return fetch(url, {
-    method: 'post',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(data),
-  }).then(handleResponse)
+  return withRetry(() =>
+    fetch(url, {
+      method: 'post',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(data),
+    }).then(handleResponse),
+  )
 }
 
+async function withRetry(action) {
+  while (true) {
+    const result = await action()
+
+    if (result instanceof Retry) {
+      await new Promise((r) => setTimeout(r, 1000))
+    } else {
+      return result
+    }
+  }
+}
+
+class Retry extends Error {}
+
 function handleResponse(response) {
+  if (response.status >= 500) {
+    return new Retry()
+  }
+
   if ((response.headers.get('content-type') || '').indexOf('application/json') > -1) {
     return response.json()
   } else {

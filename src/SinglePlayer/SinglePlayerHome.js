@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback } from 'react'
 import styles from './SinglePlayerHome.module.css'
-import { getSelection, getSettings, updateSetting } from '../api'
+import { getSelection, getSettings, startRace, updateSetting } from '../api'
 import { TrackMap } from './TrackMap/TrackMap'
 import c from 'classnames'
 import { SessionSettings } from './SessionSettings/SessionSettings'
 import { TRACK_TYPE_MAP } from './TrackSelection/TrackSelection'
 import { Link } from 'react-router-dom'
-import { useRouteMatch } from 'react-router'
+import { useHistory, useRouteMatch } from 'react-router'
 import { SETTING_CATEGORIES, SHOULD_RELOAD } from './SessionSettings/SettingsCategories'
 import { SET_STATE, UPDATE_PROP, useSettingsReducer } from './SessionSettings/useSettingsReducer'
+import { Tile } from '../Tile/Tile'
+import { Title } from '../Tile/Title'
 
 export function SinglePlayerHome() {
   const [selection, setSelection] = useState()
   const { path } = useRouteMatch()
+  const history = useHistory()
 
   useEffect(() => {
     getSelection().then((s) => setSelection(s))
@@ -35,16 +38,20 @@ export function SinglePlayerHome() {
     [dispatch],
   )
 
-  return selection ? (
+  const onStartRace = useCallback(() => {
+    startRace().then(() => history.push('/event/loading'))
+  }, [history])
+
+  return selection && state ? (
     <div className={styles.SinglePlayerRaceSetup}>
-      <div className={c(styles.GeneralSettings, styles.Tile, styles.Settings)}>
-        <div className={styles.Title}>Session settings</div>
+      <Tile className={c(styles.GeneralSettings, styles.Settings)} row="1/-1">
+        <Title>Session settings</Title>
         <SessionSettings state={state} onPropUpdate={onPropUpdate} section={SETTING_CATEGORIES.MAIN} />
-      </div>
+      </Tile>
 
       <Link to={`${path}/track`}>
-        <div className={c(styles.Tile, styles.Clickable, styles.Track)}>
-          <div className={styles.Title}>Track</div>
+        <Tile clickable className={styles.Track} row="1" col="2">
+          <Title>Track</Title>
           <div className={c(styles.Image, 'FitImage')}>
             <TrackMap id={selection.track.id} />
           </div>
@@ -55,33 +62,40 @@ export function SinglePlayerHome() {
             <p>Length: {selection.track.length}</p>
             <p>Type: {TRACK_TYPE_MAP[selection.track.type.toLowerCase()]}</p>
           </div>
-        </div>
+        </Tile>
       </Link>
+
       <Link to={`${path}/car`}>
-        <div className={c(styles.Tile, styles.Clickable, styles.Car)}>
-          <div className={styles.Title}>Car</div>
+        <Tile clickable className={styles.Car} row="2" col="2">
+          <Title>Car</Title>
           <div className={c(styles.Image, 'FitImage')}>
             <img alt="car" src={selection.car.image} />
           </div>
           <div>
-            <div className={styles.Title}>{selection.car.fullPathTree.split(',').at(-1).trim()}</div>
+            <Title>{selection.car.fullPathTree.split(',').at(-1)?.trim()}</Title>
             <p>{selection.car.name}</p>
             <p>Manufacturer: {selection.car.manufacturer}</p>
             <p>Engine: {selection.car.engine}</p>
           </div>
-        </div>
+        </Tile>
       </Link>
-      <div className={c(styles.Tile, styles.Opponents)}>
-        <div className={styles.Title}>Opponents</div>{' '}
+
+      <Tile className={styles.Opponents} row="1" col="3">
+        <Title>Opponents</Title>
         <SessionSettings state={state} onPropUpdate={onPropUpdate} section={SETTING_CATEGORIES.OPPONENTS} />
-      </div>
-      <div className={c(styles.Tile, styles.Conditions)}>
-        <div className={styles.Title}>Contiditions</div>{' '}
+        <Link to={`${path}/opponents`}>
+          <button>Choose opponents</button>
+        </Link>
+      </Tile>
+
+      <Tile className={styles.Conditions} row="2" col="3">
+        <Title>Contiditions</Title>
         <SessionSettings state={state} onPropUpdate={onPropUpdate} section={SETTING_CATEGORIES.CONDITIONS} />
-      </div>
-      <button className={styles.Race} onClick={() => {}}>
+      </Tile>
+
+      <Tile clickable className={styles.Race} onClick={onStartRace} row="3" col="2/-1">
         RACE
-      </button>
+      </Tile>
     </div>
   ) : (
     'Loading'

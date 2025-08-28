@@ -46,7 +46,7 @@ export function TrackSelection() {
   useEffect(() => {
     getTracks().then((layouts) => {
       setLayouts(layouts)
-      setTracks(Array.from(new Set((layouts || []).map((x) => x.shortName))))
+      setTracks(Array.from(new Set((layouts || []).map((x) => x.shortName).sort((a, b) => a.localeCompare(b)))))
       setTrackTypes(Array.from(new Set((layouts || []).map((track) => TRACK_TYPE_MAP[track.type.toLowerCase()]))))
     })
   }, [])

@@ -3,69 +3,25 @@
   max-height: 100%;
   display: grid;
   gap: 6px;
-  grid: 1fr 1fr 80px / auto 1fr auto;
+  grid: minmax(0, 1fr) minmax(0, 1fr) 80px / auto 1fr auto;
   vertical-align: center;
 }
 
-.Tile {
-  backdrop-filter: blur(10px);
-  box-sizing: border-box;
-  padding: 20px 30px;
-  color: white;
-  background: rgba(0, 0, 0, 0.6);
-  overflow-y: auto;
+.SinglePlayerRaceSetup > a {
+  display: flex;
 }
 
-.Tile .Title {
-  font-size: x-large;
-}
-
-.Tile.Clickable {
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.Tile.Car {
-  grid-row: 2;
-  grid-column: 2;
-}
-
-.Tile.Track {
-  grid-row: 1;
-  grid-column: 2;
-}
-
-.Tile.Opponents {
-  grid-row: 1;
-  grid-column: 3;
-}
-
-.Tile.Conditions {
-  grid-row: 2;
-  grid-column: 3;
-}
-
-.Race {
-  grid-row: 3;
-  grid-column: 2 / span 2;
-}
-
-.Tile.Car,
-.Tile.Track {
+.Car,
+.Track {
   display: grid;
   grid: auto 1fr / 1fr 2fr;
 }
 
-.Tile > .Image {
+.Image {
   grid-row: span 2;
 }
 
-.Tile.Settings {
+.Settings {
   display: flex;
   flex-direction: column;
-  grid-row: 1 / span 3;
-}
-
-.Tile.Clickable:hover {
-  background: rgba(0, 0, 0, 0.8);
 }
