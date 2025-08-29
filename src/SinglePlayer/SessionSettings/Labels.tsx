@@ -1,4 +1,4 @@
-export const LABELS = {
+export const LABELS: Record<string, string> = {
   PRACTICE: 'Practice sessions',
   QUALIFY: 'Qualify sessions',
   WARMUP: 'Warmup sessions',

@@ -34,7 +34,8 @@
         document.body.appendChild(root)
 
         if (betterUi.devMode) {
-          addScriptTag('http://localhost:3000/static/js/bundle.js')
+          addScriptTag('http://localhost:3000/assets/index.js')
+          addLinkTag('http://localhost:3000/assets/index.css')
         } else {
           addScriptTag('/framework/better-ui/js/<jsFile>')
           addLinkTag('/framework/better-ui/css/<cssFile>')
@@ -49,6 +50,7 @@
       if (betterUi.enabled) addFlagToggle(controls, 'DEV mode', 'betterUi.devMode')
       document.body.prepend(controls)
     } catch (e) {
+      console.error(e)
       if (betterUi.devMode) {
         alert(e)
       }
@@ -58,6 +60,7 @@
   function addFlagToggle(parent, name, setting) {
     const enabled = window.localStorage.getItem(setting) === 'true'
     const el = document.createElement('div')
+    el.style = 'background: white; color: black;'
     el.innerText = `${name} ${enabled ? 'ON' : 'OFF'}`
     el.addEventListener('click', async () => {
       if (await confirmChoice(`${enabled ? 'Disable' : 'Enable'} ${name}`)) {

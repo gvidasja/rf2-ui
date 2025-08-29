@@ -1,4 +1,6 @@
-export const SETTING_TYPE = {
+import type { SessionSettings } from '../../api'
+
+export const SETTING_TYPE: Record<string, 'set' | 'inc'> = {
   PRACTICE: 'set',
   QUALIFY: 'set',
   RACE: 'set',
@@ -6,7 +8,7 @@ export const SETTING_TYPE = {
   DEFAULT: 'inc',
 }
 
-export const SHOULD_RELOAD = {
+export const SHOULD_RELOAD: Record<string, boolean | string[]> = {
   SESSSET_Finish_Criteria: ['SESSSET_Race_Laps', 'SESSSET_race_time'],
   SESSSET_weather: true,
 }
@@ -56,7 +58,7 @@ export const SETTING_CATEGORIES = {
   },
 }
 
-export const DISABLED = {
+export const DISABLED: Record<string, (x: SessionSettings) => boolean> = {
   ...forKeys(SETTING_CATEGORIES.MAIN.PRACTICE.slice(1), (state) => eq(state, 'PRACTICE', 0)),
   ...forKeys(SETTING_CATEGORIES.MAIN.QUALIFY.slice(1), (state) => eq(state, 'QUALIFY', 0)),
   ...forKeys(SETTING_CATEGORIES.MAIN.WARMUP.slice(1), (state) => eq(state, 'WARMUP', 0)),
@@ -69,14 +71,14 @@ export const DISABLED = {
   SESSSET_realroad_timescale_race: (state) => eq(state, 'RACE', 0),
 }
 
-function forKeys(keys, disableCheck) {
+function forKeys(keys: string[], disableCheck: (x: SessionSettings) => boolean) {
   return Object.fromEntries(keys.map((key) => [key, disableCheck]))
 }
 
-function eq(state, key, value) {
+function eq(state: SessionSettings, key: string, value: number) {
   return state && state[key] && state[key].currentValue === value
 }
 
-function notEq(state, key, value) {
+function notEq(state: SessionSettings, key: string, value: number) {
   return state && state[key] && state[key].currentValue !== value
 }

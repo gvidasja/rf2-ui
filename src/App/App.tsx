@@ -1,8 +1,8 @@
-import { NavLink, Redirect, Route, HashRouter as Router, Switch } from 'react-router-dom'
+import { Navigate, NavLink, Route, HashRouter as Router, Routes } from 'react-router-dom'
 import { quitGame } from '../api'
 import { Community } from '../Community/Community'
 import { Competition } from '../Competition/Competition'
-import { Event } from '../Event/Event'
+// import { Event } from '../Event/Event'
 import { MainMenu } from '../MainMenu/MainMenu'
 import { MultiPlayer } from '../MultiPlayer/MultiPLayer'
 import { Profile } from '../Profile/Profile'
@@ -11,17 +11,17 @@ import { SinglePlayer } from '../SinglePlayer/SinglePlayer'
 import { Watch } from '../Watch/Watch'
 import styles from './App.module.css'
 
-function QuitModal({ onHide }) {
-  return (
-    <div>
-      <div>Quit?</div>
-      <div>
-        <button onClick={quitGame}>Yes</button>
-        <button onClick={onHide}>No</button>
-      </div>
-    </div>
-  )
-}
+// function QuitModal({ onHide }: { onHide: () => void }) {
+//   return (
+//     <div>
+//       <div>Quit?</div>
+//       <div>
+//         <button onClick={quitGame}>Yes</button>
+//         <button onClick={onHide}>No</button>
+//       </div>
+//     </div>
+//   )
+// }
 
 export function App() {
   // const nav = useHistory()
@@ -45,19 +45,18 @@ export function App() {
       </div>
       <div className={styles.AppContainer}>
         {/* <img alt="background" className={styles.BackgroundImage} src={asset('bg.jpg')} /> */}
-        <Switch>
-          <Route path="/sp" component={SinglePlayer} />
-          <Route path="/mp" component={MultiPlayer} />
-          <Route path="/cmp" component={Competition} />
-          <Route path="/watch" component={Watch} />
-          <Route path="/community" component={Community} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/event" component={Event} />
-          <Route path="/" component={MainMenu} />
-          <Redirect to="/" />
-        </Switch>
-        {/* {quitModal} */}
+        <Routes>
+          <Route index element={<MainMenu />} />
+          <Route path="/sp/*" element={<SinglePlayer />} />
+          <Route path="/mp" element={<MultiPlayer />} />
+          <Route path="/cmp" element={<Competition />} />
+          <Route path="/watch" element={<Watch />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          {/* <Route path="/event" element={<Event />} /> */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
     </Router>
   )

@@ -1,16 +1,19 @@
-import { useState, useEffect } from 'react'
-import styles from './TrackMap.module.css'
+import { useEffect, useState } from 'react'
 import { getTrackMap } from '../../api'
+import styles from './TrackMap.module.css'
 
-export function TrackMap({ id, padding = 10 }) {
-  const [path, setPath] = useState([])
-  const [ds, setDs] = useState([])
+export function TrackMap({ id, padding = 10 }: { id: string; padding?: number }) {
+  const [path, setPath] = useState([] as P[])
+  const [ds, setDs] = useState([] as string[])
   const [viewbox, setViewbox] = useState([0, 0, 1, 1])
 
   useEffect(() => {
     let active = true
     getTrackMap(id).then((r) => active && setPath(r))
-    return () => (active = false)
+
+    return () => {
+      active = false
+    }
   }, [id])
 
   useEffect(() => {
@@ -49,6 +52,12 @@ export function TrackMap({ id, padding = 10 }) {
   )
 }
 
-function generateD(minX, minZ, padding, path) {
+function generateD(minX: number, minZ: number, padding: number, path: P[]) {
   return path.map(({ x, z }, i) => `${i === 0 ? 'M' : 'L'}${x - minX + padding},${-z - minZ + padding}`).join(' ')
+}
+
+type P = {
+  x: number
+  z: number
+  type: number
 }

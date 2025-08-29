@@ -1,4 +1,12 @@
 ###
+# @name get_selection
+GET http://localhost:5397/rest/race/selection?locale=en-US###
+
+###
+# @name get_tracks
+GET http://localhost:5397/rest/race/track?locale=en-US
+
+###
 # @name get_status
 GET http://localhost:5397/rest/shop/workshop/status
 

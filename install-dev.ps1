@@ -6,14 +6,16 @@ npm run build
 
 mkdir -Force temp
 mkdir -Force temp\new
-cp $package temp
+Copy-Item $package temp
 tar -xf "temp\$packageFile" -C temp\new
 
 $mainFile = (Get-ChildItem -File -Filter "temp\new\static\framework\main-*" | Select-Object -First 1)[0].Name
-$jsFile = (Get-ChildItem -File -Filter "build\static\js\*.js" | Select-Object -First 1)[0].Name
-$cssFile = (Get-ChildItem -File -Filter "build\static\css\*.css" | Select-Object -First 1)[0].Name
+$jsFile = (Get-ChildItem -File -Filter "dist\assets\index*.js" | Select-Object -First 1)[0].Name
+$cssFile = (Get-ChildItem -File -Filter "dist\assets\index*.css" | Select-Object -First 1)[0].Name
 
 Write-Host "found main file: $mainFile"
+Write-Host "found js file: $jsFile"
+Write-Host "found css file: $cssFile"
 
 $hookFileContent = ((Get-Content scripts\hook.js -raw) -replace "<jsFile>", $jsFile -replace "<cssFile>", $cssFile)
 $cleanedMainContent = (Get-Content "temp\new\static\framework\$mainFile" -raw) -replace '(?s).*/\*%%%INJECT\*/(?<content>.*)/\*%%%ENDINJECT\*/.*|(?<content>.*)', '${content}'

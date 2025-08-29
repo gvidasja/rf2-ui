@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
-import { getSelection, getTracks, selectTrack } from '../../api'
-import { TrackMap } from '../TrackMap/TrackMap'
 import c from 'classnames'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { getSelection, getTracks, selectTrack, type RaceTrack } from '../../api'
+import { TrackMap } from '../TrackMap/TrackMap'
 import styles from './TrackSelection.module.css'
-import { useHistory } from 'react-router'
 
 const TRACK_TYPE = {
   PERMANENT_ROAD_COURSE: 'Permanent Road Course',
@@ -12,7 +12,7 @@ const TRACK_TYPE = {
   OVAL: 'Oval',
 }
 
-export const TRACK_TYPE_MAP = {
+export const TRACK_TYPE_MAP: Record<string, string> = {
   'permanent road course': TRACK_TYPE.PERMANENT_ROAD_COURSE,
   'temporary road course': TRACK_TYPE.PERMANENT_ROAD_COURSE,
   'road course': TRACK_TYPE.PERMANENT_ROAD_COURSE,
@@ -31,27 +31,27 @@ export const TRACK_TYPE_MAP = {
 }
 
 export function TrackSelection() {
-  const history = useHistory()
-  const [tracks, setTracks] = useState()
-  const [layouts, setLayouts] = useState()
-  const [trackTypes, setTrackTypes] = useState([])
-  const [selected, setSelected] = useState()
+  const navigate = useNavigate()
+  const [trackNamesList, setTrackNamesList] = useState<string[]>()
+  const [layouts, setLayouts] = useState<RaceTrack[]>()
+  const [trackTypes, setTrackTypes] = useState<string[]>([])
+  const [selected, setSelected] = useState<RaceTrack>()
 
   useEffect(() => {
     getSelection().then((r) => setSelected(r.track))
   }, [])
 
-  const onSelectTrack = useCallback((track) => selectTrack(track.id).then(() => history.goBack()), [history])
+  const onSelectTrack = useCallback((track: RaceTrack) => selectTrack(track.id).then(() => navigate(-1)), [navigate])
 
   useEffect(() => {
     getTracks().then((layouts) => {
       setLayouts(layouts)
-      setTracks(Array.from(new Set((layouts || []).map((x) => x.shortName).sort((a, b) => a.localeCompare(b)))))
+      setTrackNamesList(Array.from(new Set((layouts || []).map((x) => x.shortName).sort((a, b) => a.localeCompare(b)))))
       setTrackTypes(Array.from(new Set((layouts || []).map((track) => TRACK_TYPE_MAP[track.type.toLowerCase()]))))
     })
   }, [])
 
-  return selected && layouts && tracks && trackTypes ? (
+  return selected && layouts && trackNamesList && trackTypes ? (
     <div className={styles.TrackSelection}>
       <div className={styles.TrackTypes}>
         {trackTypes.map((t, i) => (
@@ -61,7 +61,7 @@ export function TrackSelection() {
         ))}
       </div>
       <div className={styles.Tracks}>
-        {tracks.map((track, i) => (
+        {trackNamesList.map((track, i) => (
           <div
             key={i}
             onClick={() => setSelected(layouts.find((x) => x.shortName === track))}

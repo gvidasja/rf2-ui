@@ -1,21 +1,21 @@
-import { useState, useEffect, useCallback } from 'react'
-import styles from './SinglePlayerHome.module.css'
-import { getSelection, getSettings, startRace, updateSetting } from '../api'
-import { TrackMap } from './TrackMap/TrackMap'
 import c from 'classnames'
-import { SessionSettings } from './SessionSettings/SessionSettings'
-import { TRACK_TYPE_MAP } from './TrackSelection/TrackSelection'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { Link } from 'react-router-dom'
-import { useHistory, useRouteMatch } from 'react-router'
-import { SETTING_CATEGORIES, SHOULD_RELOAD } from './SessionSettings/SettingsCategories'
-import { SET_STATE, UPDATE_PROP, useSettingsReducer } from './SessionSettings/useSettingsReducer'
+import { getSelection, getSettings, type RaceSelection, startRace, updateSetting } from '../api'
 import { Tile } from '../Tile/Tile'
 import { Title } from '../Tile/Title'
+import { SessionSettings } from './SessionSettings/SessionSettings'
+import { SETTING_CATEGORIES, SHOULD_RELOAD } from './SessionSettings/SettingsCategories'
+import { useSettingsReducer } from './SessionSettings/useSettingsReducer'
+import styles from './SinglePlayerHome.module.css'
+import { TrackMap } from './TrackMap/TrackMap'
+import { TRACK_TYPE_MAP } from './TrackSelection/TrackSelection'
 
 export function SinglePlayerHome() {
-  const [selection, setSelection] = useState()
-  const { path } = useRouteMatch()
-  const history = useHistory()
+  const [selection, setSelection] = useState<RaceSelection>()
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     getSelection().then((s) => setSelection(s))
@@ -24,23 +24,23 @@ export function SinglePlayerHome() {
   const [state, dispatch] = useSettingsReducer()
 
   useEffect(() => {
-    getSettings().then((r) => dispatch({ type: SET_STATE, value: r }))
+    getSettings().then((r) => dispatch({ type: 'SET_STATE', value: r }))
   }, [dispatch])
 
   const onPropUpdate = useCallback(
-    (key, value) =>
+    (key: string, value: number) =>
       updateSetting(key, value).then((r) => {
-        dispatch({ type: UPDATE_PROP, key, value: r })
+        dispatch({ type: 'UPDATE_PROP', key, value: r })
         if (SHOULD_RELOAD[key]) {
-          getSettings().then((r) => dispatch({ type: SET_STATE, value: r }))
+          getSettings().then((r) => dispatch({ type: 'SET_STATE', value: r }))
         }
       }),
     [dispatch],
   )
 
   const onStartRace = useCallback(() => {
-    startRace().then(() => history.push('/event/loading'))
-  }, [history])
+    startRace().then(() => navigate('/event/loading'))
+  }, [navigate])
 
   return selection && state ? (
     <div className={styles.SinglePlayerRaceSetup}>
@@ -49,7 +49,7 @@ export function SinglePlayerHome() {
         <SessionSettings state={state} onPropUpdate={onPropUpdate} section={SETTING_CATEGORIES.MAIN} />
       </Tile>
 
-      <Link to={`${path}/track`}>
+      <Link to="track">
         <Tile clickable className={styles.Track} row="1" col="2">
           <Title>Track</Title>
           <div className={c(styles.Image, 'FitImage')}>
@@ -65,14 +65,14 @@ export function SinglePlayerHome() {
         </Tile>
       </Link>
 
-      <Link to={`${path}/car`}>
+      <Link to="car">
         <Tile clickable className={styles.Car} row="2" col="2">
           <Title>Car</Title>
           <div className={c(styles.Image, 'FitImage')}>
             <img alt="car" src={selection.car.image} />
           </div>
           <div>
-            <Title>{selection.car.fullPathTree.split(',').at(-1)?.trim()}</Title>
+            <Title>{selection.car.fullPathTree.split(',').at(-1).trim()}</Title>
             <p>{selection.car.name}</p>
             <p>Manufacturer: {selection.car.manufacturer}</p>
             <p>Engine: {selection.car.engine}</p>
@@ -83,7 +83,7 @@ export function SinglePlayerHome() {
       <Tile className={styles.Opponents} row="1" col="3">
         <Title>Opponents</Title>
         <SessionSettings state={state} onPropUpdate={onPropUpdate} section={SETTING_CATEGORIES.OPPONENTS} />
-        <Link to={`${path}/opponents`}>
+        <Link to="opponents">
           <button>Choose opponents</button>
         </Link>
       </Tile>

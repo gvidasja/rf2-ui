@@ -1,8 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './CarSelection.module.css'
 
-export function Tree({ onSelect, selected, data, getPath, getKey }) {
-  const [rootNode, setRootNode] = useState()
+type Selector<T> = (x: T) => void
+type PathGetter<T> = (x: T) => string[]
+type KeyGetter<T> = (x: T) => string
+
+export function Tree<T>({
+  onSelect,
+  selected,
+  data,
+  getPath,
+  getKey,
+}: {
+  onSelect: Selector<T>
+  selected: T
+  data: T[]
+  getPath: PathGetter<T>
+  getKey: KeyGetter<T>
+}) {
+  const [rootNode, setRootNode] = useState<Node<T>>()
 
   useEffect(() => {
     if (!data) {
@@ -15,8 +31,18 @@ export function Tree({ onSelect, selected, data, getPath, getKey }) {
   return rootNode ? <TreeView node={rootNode} onSelect={onSelect} selected={selected} getKey={getKey} /> : ''
 }
 
-function TreeView({ node, onSelect, selected, getKey }) {
-  const [expanded, setExpanded] = useState()
+function TreeView<T>({
+  node,
+  onSelect,
+  selected,
+  getKey,
+}: {
+  node: Node<T>
+  onSelect: Selector<T>
+  selected: T
+  getKey: KeyGetter<T>
+}) {
+  const [expanded, setExpanded] = useState<string>()
 
   return Object.entries(node.children)
     .sort(([a], [b]) => a.localeCompare(b))
@@ -30,7 +56,7 @@ function TreeView({ node, onSelect, selected, getKey }) {
             if (child.category) {
               setExpanded(key === expanded ? '' : key)
             } else {
-              onSelect(child)
+              onSelect(child.item!)
             }
           }}
         >
@@ -47,15 +73,22 @@ function TreeView({ node, onSelect, selected, getKey }) {
     ))
 }
 
-function buildTree(data, getPath, getKey) {
-  const tree = { children: {} }
+interface Node<T> {
+  children: Record<string, Node<T>>
+  item?: T
+  parent?: Node<T>
+  category?: string
+}
+
+function buildTree<T>(data: T[], getPath: (x: T) => string[], getKey: (x: T) => string) {
+  const tree: Node<T> = { children: {} }
 
   data.forEach((item) => {
     const path = getPath(item)
     let node = tree
 
     while (path.length > 0) {
-      const el = path.shift()
+      const el = path.shift()!
       node.children[el] = node.children[el] || {
         children: {},
         parent: node,
@@ -64,7 +97,11 @@ function buildTree(data, getPath, getKey) {
       node = node.children[el]
     }
 
-    node.children[getKey(item)] = item
+    node.children[getKey(item)] = {
+      children: {},
+      item,
+      parent: node,
+    }
   })
   return tree
 }

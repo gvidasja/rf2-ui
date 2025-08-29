@@ -1,31 +1,46 @@
-import { useCallback, useState, useEffect } from 'react'
 import c from 'classnames'
-import { getCars, getOpponentFilter, getOpponents, updateOpponentFilter } from '../../api'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import {
+  getCars,
+  getOpponentFilter,
+  getOpponents,
+  updateOpponentFilter,
+  type RaceCar,
+  type SessionsOpponent,
+  type SessionsOpponentFilter,
+} from '../../api'
 import { Tile } from '../../Tile/Tile'
 import styles from './OpponentSelection.module.css'
-import { useHistory } from 'react-router'
+
+type OpponentFilter = SessionsOpponentFilter & { selected: boolean; searchCache: string }
 
 export function OpponentSelection() {
-  const history = useHistory()
-  const [opponents, setOpponents] = useState()
-  const [opponentFilter, setOpponentFilter] = useState()
+  const navigate = useNavigate()
+  const [opponents, setOpponents] = useState<SessionsOpponent[]>()
+  const [opponentFilter, setOpponentFilter] = useState<OpponentFilter[]>()
   const [onlySelected, setOnlySelected] = useState(false)
   const [search, setSearch] = useState('')
-  const [carCache, setCarCache] = useState({})
+  const [carCache, setCarCache] = useState<Record<string, string>>({})
 
-  const onDone = useCallback(() => history.goBack(), [history])
+  const onDone = useCallback(() => navigate(-1), [navigate])
 
-  const processOpponents = (r) => setOpponents(r.filter((x) => x))
-  const processOpponentFilters = (r) =>
+  const processOpponents = (r: SessionsOpponent[]) => setOpponents(r.filter((x) => x))
+  const processOpponentFilters = (r: SessionsOpponentFilter[]) =>
     setOpponentFilter(
       r
         .filter((x) => x)
         .map((x) => ({ ...x, selected: x.state !== 'OP_NOTHING', searchCache: x.stringValue.toLowerCase() })),
     )
 
-  const processCars = (r) =>
+  const processCars = (r: RaceCar[]) =>
     setCarCache(
-      Object.fromEntries(r.map((x) => [x.name.trim().replace(/ \d+\.\d+$/, ''), x.fullPathTree.split(',').at(-1)])),
+      Object.fromEntries(
+        r.map((x) => [
+          x.name.trim().replace(/ \d+\.\d+$/, ''),
+          x.fullPathTree.split(',').at(-1) || 'MISSING_PATH_SEGMENT',
+        ]),
+      ),
     )
 
   useEffect(() => {
@@ -41,7 +56,7 @@ export function OpponentSelection() {
   }, [])
 
   const onToggleFilter = useCallback(
-    (filter) =>
+    (filter: OpponentFilter) =>
       updateOpponentFilter({ vectorIndex: filter.gSelectedListIndex, state: filter.selected ? 0 : 1 }).then(
         ({ opponents, filters }) => {
           processOpponents(opponents)
@@ -60,7 +75,7 @@ export function OpponentSelection() {
             <input
               id="onlySelected"
               type="checkbox"
-              value={onlySelected}
+              checked={onlySelected}
               onChange={() => setOnlySelected(!onlySelected)}
             />
             <span>Selected Only</span>

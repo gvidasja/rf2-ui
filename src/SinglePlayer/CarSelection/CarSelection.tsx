@@ -1,22 +1,24 @@
-import { useState, useEffect, useCallback } from 'react'
 import c from 'classnames'
-import { getCars, getSelection, selectCar } from '../../api'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { getCars, getSelection, selectCar, type RaceCar } from '../../api'
 import styles from './CarSelection.module.css'
-import { useHistory } from 'react-router'
 import { Tree } from './Tree'
 
 export function CarSelection() {
-  const history = useHistory()
-  const [cars, setCars] = useState()
-  const [selected, setSelected] = useState()
+  const navigate = useNavigate()
+  const [cars, setCars] = useState<RaceCar[]>()
+  const [selected, setSelected] = useState<RaceCar>()
 
   useEffect(() => {
     getSelection().then((r) => setSelected(r.car))
   }, [])
 
-  const onSelectCar = useCallback((car) => selectCar(car.id).then(() => history.goBack()), [history])
+  const onSelectCar = useCallback((car: RaceCar) => selectCar(car.id).then(() => navigate(-1)), [navigate])
 
-  useEffect(() => getCars().then(setCars), [])
+  useEffect(() => {
+    getCars().then(setCars)
+  }, [])
 
   return selected && cars ? (
     <div className={styles.CarSelection}>
@@ -36,10 +38,10 @@ export function CarSelection() {
   )
 }
 
-function getCarPath(car) {
+function getCarPath(car: RaceCar) {
   return car.fullPathTree.split(',').map((x) => x.trim())
 }
 
-function getCarKey(car) {
+function getCarKey(car: RaceCar) {
   return car.name
 }

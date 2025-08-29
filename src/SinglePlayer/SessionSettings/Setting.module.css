@@ -14,3 +14,11 @@
 .ValueLabel {
   justify-content: center;
 }
+
+.Button {
+  transition: background 0.1s ease;
+}
+
+.Button:hover {
+  background: grey;
+}
