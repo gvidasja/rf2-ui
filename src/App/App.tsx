@@ -1,8 +1,9 @@
-import { Navigate, NavLink, Route, HashRouter as Router, Routes } from 'react-router-dom'
+import { Navigate, Route, HashRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { quitGame } from '../api'
 import { Community } from '../Community/Community'
 import { Competition } from '../Competition/Competition'
 // import { Event } from '../Event/Event'
+import { useEffect } from 'react'
 import { MainMenu } from '../MainMenu/MainMenu'
 import { MultiPlayer } from '../MultiPlayer/MultiPLayer'
 import { Profile } from '../Profile/Profile'
@@ -34,10 +35,10 @@ export function App() {
 
   return (
     <Router>
+      <KeyboardHandler />
       <div className={styles.TopMenu}>
         <div className={styles.Left}>
-          <NavLink to="/">rFactor2</NavLink>
-          <NavLink to="/event/watch">Race</NavLink>
+          <Breadcrumbs />
         </div>
         <div className={styles.Right}>
           <button onClick={quitGame}>EXIT</button>
@@ -60,4 +61,39 @@ export function App() {
       </div>
     </Router>
   )
+}
+
+function KeyboardHandler() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        if (location.pathname === '/') {
+          console.log('EXIT?')
+        }
+
+        navigate(-1)
+      }
+
+      if (e.key === 'F5') {
+        window.location.reload()
+      }
+    }
+
+    window.addEventListener('keydown', handler)
+
+    return () => {
+      window.removeEventListener('keydown', handler)
+    }
+  }, [navigate])
+
+  return <></>
+}
+
+function Breadcrumbs() {
+  const location = useLocation()
+
+  return <div>{location.pathname.slice(1)}</div>
 }

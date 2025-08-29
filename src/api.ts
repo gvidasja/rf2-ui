@@ -1,3 +1,5 @@
+import { LABELS } from './SinglePlayer/SessionSettings/labels'
+
 console.log('ENV', import.meta.env)
 
 export function getSelection(): Promise<RaceSelection> {
@@ -28,32 +30,46 @@ export function selectCar(id: string) {
 //   return post(`/rest/sessions/${key}/sessions`, value)
 // }
 
-const SESSION_COUNT_KEYS = ['PRACTICE', 'QUALIFY', 'WARMUP', 'RACE']
-const SESSION_COUNT_MAX: Record<string, number> = {
-  WARMUP: 1,
-  DEFAULT: 4,
-}
+// const SESSION_COUNT_KEYS = ['PRACTICE', 'QUALIFY', 'WARMUP', 'RACE']
+// const SESSION_COUNT_MAX: Record<string, number> = {
+//   WARMUP: 1,
+//   DEFAULT: 4,
+// }
 
-export function updateSetting(key: string, value: number) {
-  return SESSION_COUNT_KEYS.includes(key)
-    ? post(`/rest/sessions/${key.toLowerCase()}/sessions`, String(value)).then(() => ({
-        currentValue: Math.min(Math.max(0, value), SESSION_COUNT_MAX[key] || SESSION_COUNT_MAX.DEFAULT),
-      }))
-    : postJSON('/rest/sessions/settings', { sessionSetting: key, value })
-}
-
-export async function getSettings(): Promise<SessionSettings> {
+export async function updateSetting(key: string, value: number): Promise<SessionSetting> {
+  const updatedSetting = await postJSON('/rest/sessions/settings', { sessionSetting: key, value })
+  // return SESSION_COUNT_KEYS.includes(key)
+  //   ? post(`/rest/sessions/${key.toLowerCase()}/sessions`, String(value)).then(() => ({
+  //       currentValue: Math.min(Math.max(0, value), SESSION_COUNT_MAX[key] || SESSION_COUNT_MAX.DEFAULT),
+  //     }))
+  //   :
   return {
-    ...(await get('/rest/sessions')),
-    ...(await getSessionsAmount()),
+    label: LABELS[key],
+    stringValue: updatedSetting.stringValue,
+    currentValue: Number(updatedSetting.currentValue),
   }
 }
 
-async function getSessionsAmount() {
-  const r = (await get('/rest/sessions/amount')) as Record<string, number>
+export async function getSettings(): Promise<SessionSettings> {
+  const rawSettings = (await get('/rest/sessions')) as SessionSettingsDTO
 
-  return Object.fromEntries(Object.entries(r).map(([key, currentValue]) => [key, { valueType: 'LONG', currentValue }]))
+  return Object.fromEntries(
+    Object.entries(rawSettings).map(([key, value]) => [
+      key,
+      {
+        label: LABELS[key],
+        stringValue: value.stringValue,
+        currentValue: Number(value.currentValue),
+      },
+    ]),
+  )
 }
+
+// async function getSessionsAmount() {
+//   const r = (await get('/rest/sessions/amount')) as Record<string, number>
+
+//   return Object.fromEntries(Object.entries(r).map(([key, currentValue]) => [key, { valueType: 'LONG', currentValue }]))
+// }
 
 export function getOpponents(): Promise<SessionsOpponent[]> {
   return get('/rest/sessions/opponents')
@@ -190,9 +206,9 @@ export interface SessionsOpponentFilter {
   gVehFilterIndex: number
 }
 
-export type SessionSettings = Record<string, SessionSetting>
+type SessionSettingsDTO = Record<string, SessionSettingDTO>
 
-export type SessionSetting = {
+type SessionSettingDTO = {
   stringValue: string
   settingID: number
 } & (
@@ -200,6 +216,14 @@ export type SessionSetting = {
   | { valueType: 'FLOAT'; currentValue: number }
   | { valueType: 'BOOL'; currentValue: boolean }
 )
+
+export type SessionSettings = Record<string, SessionSetting>
+
+export type SessionSetting = {
+  label: string
+  stringValue: string
+  currentValue: number
+}
 
 export type NavigationState = {
   loadingStatus: {

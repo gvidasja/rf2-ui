@@ -1,3 +1,3 @@
 export function MultiPlayer() {
-  return <div>MultiPlayer</div>
+  return <div>MultiPlayer (Under construction)</div>
 }

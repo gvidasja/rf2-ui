@@ -25,3 +25,14 @@
   display: flex;
   flex-direction: column;
 }
+
+.SettingsList {
+  display: grid;
+  grid-template-columns: max-content max-content 10em max-content;
+  row-gap: 2px;
+  column-gap: 6px;
+}
+
+.Category {
+  grid-column: 1 / -1;
+}

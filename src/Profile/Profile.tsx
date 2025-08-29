@@ -1,3 +1,3 @@
 export function Profile() {
-  return <div>Profile</div>
+  return <div>Profile (Under construction)</div>
 }

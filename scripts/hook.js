@@ -93,8 +93,14 @@
       const ok = document.createElement('button')
       const cancel = document.createElement('button')
 
-      ok.addEventListener('click', () => resolve(true))
-      cancel.addEventListener('click', () => resolve(false))
+      ok.addEventListener('click', () => {
+        document.body.removeChild(dialogOverlay)
+        resolve(true)
+      })
+      cancel.addEventListener('click', () => {
+        document.body.removeChild(dialogOverlay)
+        resolve(false)
+      })
 
       dialog.innerText = question
       ok.innerText = 'OK'

@@ -1,3 +1,3 @@
 export function Community() {
-  return <div>Community</div>
+  return <div>Community (Under construction)</div>
 }

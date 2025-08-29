@@ -1,59 +1,43 @@
 import c from 'classnames'
 import { useCallback } from 'react'
+import type { SessionSettings } from '../../api'
 import { usePressAndHold } from '../../usePressAndHold'
-import { LABELS } from './Labels'
 import styles from './Setting.module.css'
+import { useSessionSettings } from './sessionSettingsContext'
 
-const UPDATE_TYPE_FUNCS: Record<'inc' | 'set', Record<'increase' | 'decrease', (x: number) => number>> = {
-  inc: {
-    decrease: () => 0,
-    increase: () => 1,
-  },
-  set: {
-    decrease: (value) => value - 1,
-    increase: (value) => value + 1,
-  },
-}
+const DISABLED_NOOP = () => false
 
 export function Setting({
-  valueLabel,
-  label,
-  onChange,
-  value,
-  updateType,
-  disabled,
+  settingKey,
+  disabled = DISABLED_NOOP,
 }: {
-  valueLabel: string
-  label: string
-  onChange: (label: string, value: number) => void
-  updateType: 'inc' | 'set'
-  value: number | boolean
-  disabled: boolean
+  settingKey: string
+  disabled?: (s: SessionSettings) => boolean
 }) {
-  const { decrease, increase } = UPDATE_TYPE_FUNCS[updateType]
+  const { state, inc } = useSessionSettings()
 
-  const increaseCallback = useCallback(
-    () => onChange(label, increase(Number(value))),
-    [value, label, onChange, increase],
-  )
-  const decreaseCallback = useCallback(
-    () => onChange(label, decrease(Number(value))),
-    [value, label, onChange, decrease],
-  )
+  console.log(JSON.stringify(state[settingKey]), settingKey, inc)
+
+  const increaseCallback = useCallback(() => inc(settingKey, 1), [settingKey, inc])
+  const decreaseCallback = useCallback(() => inc(settingKey, -1), [settingKey, inc])
 
   const onPressAndHoldIncrease = usePressAndHold(increaseCallback, 50, 200)
   const onPressAndHoldDecrease = usePressAndHold(decreaseCallback, 50, 200)
 
+  if (!state[settingKey]) {
+    return <></>
+  }
+
   return (
     <>
-      <div className={c(styles.Center, styles.Label)}>{LABELS[label] || label}</div>
-      <button disabled={disabled} className={c(styles.Button, styles.Center)} {...onPressAndHoldDecrease}>
+      <div className={c(styles.Center, styles.Label)}>{state[settingKey].label}</div>
+      <button disabled={disabled(state)} className={c(styles.Button, styles.Center)} {...onPressAndHoldDecrease}>
         ◀
       </button>
       <div className={c({ [styles.Disabled]: disabled }, styles.Center, styles.ValueLabel)}>
-        {valueLabel !== undefined ? `${valueLabel} (${value})` : value}
+        {state[settingKey].stringValue || state[settingKey].currentValue}
       </div>
-      <button disabled={disabled} className={c(styles.Button, styles.Center)} {...onPressAndHoldIncrease}>
+      <button disabled={disabled(state)} className={c(styles.Button, styles.Center)} {...onPressAndHoldIncrease}>
         ▶
       </button>
     </>

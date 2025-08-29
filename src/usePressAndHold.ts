@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, type DetailedHTMLProps, type HTMLAttributes } from 'react'
+import { useCallback, useEffect, useRef, type DetailedHTMLProps, type HTMLAttributes, type PointerEvent } from 'react'
 
 export function usePressAndHold(
-  callback = () => {},
+  callback = (e: PointerEvent<HTMLButtonElement>) => {},
   interval = 300,
   delay = 0,
 ): Pick<
@@ -14,15 +14,19 @@ export function usePressAndHold(
 
   cb.current = callback
 
-  const onStart = useCallback(() => {
-    cb.current()
-
+  const onStart = useCallback((e: PointerEvent<HTMLButtonElement>) => {
     clearTimeout(timeoutRef.current)
     clearInterval(intervalRef.current)
 
+    if (e.currentTarget.disabled) {
+      return
+    }
+
+    cb.current(e)
+
     timeoutRef.current = window.setTimeout(() => {
       console.log('setting interval', timeoutRef.current, intervalRef.current)
-      intervalRef.current = window.setInterval(() => cb.current(), interval)
+      intervalRef.current = window.setInterval(() => cb.current(e), interval)
     }, delay)
   }, [])
 

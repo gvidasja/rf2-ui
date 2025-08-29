@@ -1,3 +1,3 @@
 export function Competition() {
-  return <div>Competition</div>
+  return <div>Competition (Under construction)</div>
 }

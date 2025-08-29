@@ -28,7 +28,7 @@ POST http://localhost:5397/rest/sessions/settings
 Content-Type: application/json
 
 {
-    "sessionSetting": "SESSSET_warmup_starting_time",
+    "sessionSetting": "SESSSET_run_warmup",
     "value": 1
 }
 
