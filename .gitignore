@@ -24,3 +24,6 @@ yarn-error.log*
 
 dist/
 temp/
+# bundle build output
+/bundle/build/
+/bundle/dist/

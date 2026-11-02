@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Served by the bundle at /start/index.html, the page rFactor 2 opens on startup.
+  If the Vite dev server is running (bun run dev) the UI is loaded from it with hot reload,
+  otherwise the build packed into the jar is used. Add ?prod to force the packed build.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>rFactor2</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #111; }
+      #rf2ui-dev-badge { position: fixed; right: 4px; bottom: 4px; z-index: 99999; padding: 1px 6px;
+        font: 11px sans-serif; color: #000; background: #fc0; border-radius: 3px; pointer-events: none; }
+    </style>
+    <script>
+      // Chromium 75 polyfills needed by Vite's dev client.
+      if (!Promise.allSettled) {
+        Promise.allSettled = function (ps) {
+          return Promise.all(Array.from(ps, function (p) {
+            return Promise.resolve(p).then(
+              function (value) { return { status: 'fulfilled', value: value } },
+              function (reason) { return { status: 'rejected', reason: reason } })
+          }))
+        }
+      }
+
+      (function () {
+        var DEV = 'http://localhost:5173/rf2ui/'
+        var PROD = '/rf2ui/'
+
+        function addModule(code) {
+          var s = document.createElement('script')
+          s.type = 'module'
+          s.textContent = code
+          document.head.appendChild(s)
+        }
+
+        function loadDev() {
+          addModule(
+            "import RefreshRuntime from '" + DEV + "@react-refresh';" +
+            'RefreshRuntime.injectIntoGlobalHook(window);' +
+            'window.$RefreshReg$ = () => {};' +
+            'window.$RefreshSig$ = () => (type) => type;' +
+            'window.__vite_plugin_react_preamble_installed__ = true;' +
+            // no top-level await in Chromium 75
+            "import('" + DEV + "@vite/client').then(() => import('" + DEV + "src/main.tsx'));"
+          )
+          var badge = document.createElement('div')
+          badge.id = 'rf2ui-dev-badge'
+          badge.textContent = 'DEV'
+          document.body.appendChild(badge)
+        }
+
+        function loadProd() {
+          var css = document.createElement('link')
+          css.rel = 'stylesheet'
+          css.href = PROD + 'assets/index.css'
+          document.head.appendChild(css)
+          addModule("import '" + PROD + "assets/index.js';")
+        }
+
+        function probeDev() {
+          if (/[?&]prod\b/.test(location.search)) return Promise.reject()
+          var timeout = new Promise(function (_, reject) { setTimeout(reject, 500) })
+          return Promise.race([fetch(DEV + '@vite/client', { cache: 'no-store' }), timeout]).then(function (r) {
+            if (!r.ok) throw new Error()
+          })
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+          probeDev().then(loadDev, loadProd)
+        })
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

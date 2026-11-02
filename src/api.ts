@@ -1,7 +1,5 @@
 import { LABELS } from './SinglePlayer/SessionSettings/labels'
 
-console.log('ENV', import.meta.env)
-
 export function getSelection(): Promise<RaceSelection> {
   return get('/rest/race/selection?locale=en-US')
 }
@@ -119,7 +117,8 @@ export function stopRace() {
   return post('/rest/garage/toRaceMenu')
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+// The page is served by the game (or by Vite with a proxy in browser dev), so the API is same-origin.
+const API_BASE = ''
 
 function get(url: string) {
   return withRetry(() => fetch(API_BASE + url).then(handleResponse))
@@ -165,8 +164,22 @@ function handleResponse(response: Response) {
   }
 }
 
+// Public files live under BASE_URL. Resolving against this module's own URL works both when it is
+// loaded from the jar (localhost:5397) and from the Vite dev server inside the game's page.
+const ASSET_BASE = new URL(/* @vite-ignore */ import.meta.env.BASE_URL, import.meta.url).href
+
 export function asset(src: string) {
-  return import.meta.env.VITE_REACT_APP_ASSET_PATH + src
+  return ASSET_BASE + 'assets/' + src
+}
+
+/** Sets a session setting to an absolute value (bundle endpoint; the stock API only steps +/-). */
+export async function setSettingValue(key: string, value: number): Promise<SessionSetting> {
+  const updated = await postJSON(`/rest/rf2ui/sessions/settings/${key}`, { value })
+  return {
+    label: LABELS[key],
+    stringValue: updated.stringValue,
+    currentValue: Number(updated.currentValue),
+  }
 }
 
 export interface RaceSelection {
