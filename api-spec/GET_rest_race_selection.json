@@ -1,0 +1,70 @@
+{
+  "endpoint": "GET /rest/race/selection",
+  "url": "/rest/race/selection?locale=en-US",
+  "method": "GET",
+  "recordedAt": "2026-05-27T18:55:05.287Z",
+  "query": {
+    "locale": "en-US"
+  },
+  "request": {
+    "headers": {
+      "user-agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8457",
+      "host": "localhost:5398",
+      "connection": "Keep-Alive"
+    },
+    "body": ""
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Wed, 27 May 2026 18:55:05 GMT",
+      "content-type": "application/json",
+      "content-length": "2751"
+    },
+    "body": {
+      "series": {
+        "shortName": "All Tracks & Cars",
+        "name": "All Tracks & Cars",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id felis eu est feugiat imperdiet eu ut ante. Nullam quis neque sed nunc convallis tincidunt. Morbi sagittis risus in massa volutpat feugiat. Vestibulum mollis ut magna ut sollicitudin. Vivamus tincidunt lobortis velit, sed accumsan sapien eleifend ac. Sed et fringilla nisl. Fusce non felis tortor. Proin fringilla sem ut erat sagittis, eget imperdiet nunc gravida. Cras eget est leo. Ut mollis efficitur ex a tristique. Nam faucibus dolor ut nunc dignissim pellentesque. Phasellus convallis sed eros convallis consequat. Nulla facilisi. Mauris vulputate vulputate purus, eget tempus ligula dignissim quis.",
+        "disabled": false,
+        "signature": "57f050e8a93353917f465845b7e0a261cf694164292512573ad08c1d4fc2ccdb",
+        "version": "1.0"
+      },
+      "track": {
+        "id": "1fc76cec999098ec6c879181bd6f73492af35d0f",
+        "shortName": "Istanbul Park Circuit 1.6",
+        "name": "Istanbul Grand Prix",
+        "sceneDesc": "ISTANBUL_GP",
+        "year": "1908-1909",
+        "layout": "Lorem ipsum",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id felis eu est feugiat imperdiet eu ut ante. Nullam quis neque sed nunc convallis tincidunt. Morbi sagittis risus in massa volutpat feugiat. Vestibulum mollis ut magna ut sollicitudin. Vivamus tincidunt lobortis velit, sed accumsan sapien eleifend ac. Sed et fringilla nisl. Fusce non felis tortor. Proin fringilla sem ut erat sagittis, eget imperdiet nunc gravida. Cras eget est leo. Ut mollis efficitur ex a tristique. Nam faucibus dolor ut nunc dignissim pellentesque. Phasellus convallis sed eros convallis consequat. Nulla facilisi. Mauris vulputate vulputate purus, eget tempus ligula dignissim quis.",
+        "length": "5.338 Km / 3.316 miles",
+        "type": "",
+        "localizations": {},
+        "categoryLocalizations": {},
+        "premId": -1,
+        "owned": true,
+        "image": "/rest/race/track/1fc76cec999098ec6c879181bd6f73492af35d0f/image",
+        "thumbnail": "/rest/race/track/1fc76cec999098ec6c879181bd6f73492af35d0f/thumbnail"
+      },
+      "car": {
+        "id": "404bc128cc759bc626638124af256448f6c223c0",
+        "name": "12 Jungle Cat Cars: Morris/Wilkens 1.300",
+        "description": "This vehicle has a S6 3.5L engine and is manufactured by Jungle Cat Cars.",
+        "bhp": "4 bhp",
+        "usedIn": "1754",
+        "configuration": "Lorem ipsum, Dolor sit amet",
+        "fullPathTree": "1954 Endurance,Sports 5.0",
+        "vehFile": "D:\\SteamLibrary\\steamapps\\common\\rFactor 2\\Installed\\Vehicles\\AC_Cobra_1954_Endurance\\1.300\\COBRA_1954ENDUR_12.VEH",
+        "engine": "S6 3.5L",
+        "manufacturer": "Jungle Cat Cars",
+        "localizations": {},
+        "categoryLocalizations": {},
+        "premId": -1,
+        "owned": true,
+        "image": "/rest/race/car/404bc128cc759bc626638124af256448f6c223c0/image",
+        "thumbnail": "/rest/race/car/404bc128cc759bc626638124af256448f6c223c0/thumbnail"
+      }
+    }
+  }
+}

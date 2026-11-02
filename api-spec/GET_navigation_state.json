@@ -1,0 +1,43 @@
+{
+  "endpoint": "GET /navigation/state",
+  "url": "/navigation/state",
+  "method": "GET",
+  "recordedAt": "2026-05-27T18:55:39.805Z",
+  "query": {},
+  "request": {
+    "headers": {
+      "user-agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8457",
+      "host": "localhost:5398",
+      "connection": "Keep-Alive"
+    },
+    "body": ""
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Wed, 27 May 2026 18:55:39 GMT",
+      "content-type": "application/json",
+      "content-length": "341"
+    },
+    "body": {
+      "loadingStatus": {
+        "loading": false,
+        "percentage": -1
+      },
+      "state": {
+        "settingMode": "SETTING_GRANDPRIX",
+        "gameState": "GSTATE_SETUP",
+        "gameSession": "PRACTICE1",
+        "user": {
+          "admin": false,
+          "userState": "DEFAULT"
+        },
+        "gamePhase": "BEFORE",
+        "appBuild": 1134,
+        "internalStateCode": "OP_RAN_REALTIME_PASS",
+        "navigationState": "NAV_MAIN_MENU",
+        "steamBetaBranchName": "default"
+      }
+    }
+  }
+}

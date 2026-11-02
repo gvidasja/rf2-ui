@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, type DetailedHTMLProps, type HTMLAttributes, type PointerEvent } from 'react'
 
 export function usePressAndHold(
-  callback = (e: PointerEvent<HTMLButtonElement>) => {},
+  callback = (_: PointerEvent<HTMLButtonElement>) => {},
   interval = 300,
   delay = 0,
 ): Pick<

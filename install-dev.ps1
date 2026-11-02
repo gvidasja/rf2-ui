@@ -2,7 +2,7 @@ $rf2Path = "D:\SteamLibrary\steamapps\common\rFactor 2"
 $packageFile = "net.rfactor2.ui.framework.jar"
 $package = "$rf2Path\bin\Bundles\$packageFile"
 
-npm run build
+bun run build
 
 mkdir -Force temp
 mkdir -Force temp\new
@@ -22,9 +22,8 @@ $cleanedMainContent = (Get-Content "temp\new\static\framework\$mainFile" -raw) -
 Set-Content -Path temp\newmain.js -Value ($hookFileContent | ForEach-Object { $_.Replace("//%%%INJECT", "/*%%%INJECT*/$cleanedMainContent/*%%%ENDINJECT*/") })
 
 Copy-Item -Force temp\newmain.js "temp\new\static\framework\$mainFile"
-Remove-Item "temp\new\static\framework\better-ui" -Force -Recurse -ErrorAction Ignore
-Copy-Item "build\static" -force -recurse "temp\new\static\framework\better-ui"
-Copy-Item "build\assets" -force -recurse "temp\new\static\framework\better-ui"
+Remove-Item "temp\new\static\framework\new-ui" -Force -Recurse -ErrorAction Ignore
+Copy-Item "dist" -force -recurse "temp\new\static\framework\new-ui"
 
 Compress-Archive -Force -Path temp\new\* temp\net.rfactor2.ui.framework.zip
 

@@ -7,6 +7,9 @@ export default defineConfig({
   build: {
     target: 'es2015',
     rollupOptions: {
+      input: {
+        index: 'src/main.tsx',
+      },
       output: {
         entryFileNames: 'assets/[name].js',
         chunkFileNames: 'assets/[name].js',

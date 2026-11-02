@@ -1,49 +1,57 @@
-// import { useEffect, useState } from 'react'
-// import { Route, Routes, useLocation, useNavigate } from 'react-router'
-// import { addAi, drive, getHistory, getStandings, getState, kickAi } from '../api'
+// import { useEffect, useRef, useState } from 'react'
+// import { Route, Routes, useNavigate } from 'react-router'
+// import {
+//   addAi,
+//   drive,
+//   getHistory,
+//   getStandings,
+//   getState,
+//   kickAi,
+//   type NavigationState,
+//   type WatchStanding,
+// } from '../api'
 
 // export function Event() {
-//   const { pathname } = useLocation()
-
 //   return (
 //     <Routes>
-//       <Route path={`${pathname}/loading`} element={<EventLoading />} />
-//       <Route path={`${pathname}/watch`} element={<EventWatch />} />
+//       <Route path="loading" element={<EventLoading />} />
+//       <Route path="watch" element={<EventWatch />} />
 //     </Routes>
 //   )
 // }
 
 // export function EventLoading() {
+//   const refreshInterval = useRef(0)
+
 //   const [refresh, setRefresh] = useState(Date.now())
-//   const [state, setState] = useState()
-//   const [percentage, setPercentage] = useState(0)
-//   const history = useNavigate()
+//   const [state, setState] = useState<NavigationState>()
+//   const navigate = useNavigate()
 
 //   useEffect(() => {
-//     setInterval(() => setRefresh(Date.now()), 1000)
+//     refreshInterval.current = window.setInterval(() => setRefresh(Date.now()), 1000)
+
+//     return () => {
+//       clearInterval(refreshInterval.current)
+//     }
 //   }, [])
 
 //   useEffect(() => {
-//     getState().then(setState)
-//   }, [refresh])
-
-//   useEffect(() => {
-//     if (state && state.loadingStatus) {
-//       if (!state.loadingStatus.loading) {
-//         history.push(`/event/watch`)
+//     getState().then((state) => {
+//       if (state && state.loadingStatus && !state.loadingStatus.loading) {
+//         navigate('/event/watch')
 //       }
 
-//       setPercentage(state.loadingStatus.percentage)
-//     }
-//   }, [state, history])
+//       setState(state)
+//     })
+//   }, [refresh])
 
-//   return <div>LOADING {percentage}</div>
+//   return <div>LOADING {state?.loadingStatus.percentage}</div>
 // }
 // export function EventWatch() {
 //   const [refresh, setRefresh] = useState(Date.now())
-//   const [state, setState] = useState()
+//   const [state, setState] = useState<NavigationState>()
 //   const [history, setHistory] = useState()
-//   const [standings, setStandings] = useState()
+//   const [standings, setStandings] = useState<WatchStanding[]>()
 
 //   useEffect(() => {
 //     setInterval(() => setRefresh(Date.now()), 1000)

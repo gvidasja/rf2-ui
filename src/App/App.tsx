@@ -1,9 +1,9 @@
+import { useEffect } from 'react'
 import { Navigate, Route, HashRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { quitGame } from '../api'
 import { Community } from '../Community/Community'
 import { Competition } from '../Competition/Competition'
 // import { Event } from '../Event/Event'
-import { useEffect } from 'react'
 import { MainMenu } from '../MainMenu/MainMenu'
 import { MultiPlayer } from '../MultiPlayer/MultiPLayer'
 import { Profile } from '../Profile/Profile'
@@ -55,7 +55,7 @@ export function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
-          {/* <Route path="/event" element={<Event />} /> */}
+          {/* <Route path="/event/*" element={<Event />} /> */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

@@ -99,7 +99,7 @@ export function getHistory() {
   return get('/rest/watch/standings/history')
 }
 
-export function getStandings() {
+export function getStandings(): Promise<WatchStanding[]> {
   return get('/rest/watch/standings')
 }
 
@@ -119,17 +119,19 @@ export function stopRace() {
   return post('/rest/garage/toRaceMenu')
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
 function get(url: string) {
-  return withRetry(() => fetch(url).then(handleResponse))
+  return withRetry(() => fetch(API_BASE + url).then(handleResponse))
 }
 
 function post(url: string, data?: BodyInit) {
-  return withRetry(() => fetch(url, { method: 'post', body: data }).then(handleResponse))
+  return withRetry(() => fetch(API_BASE + url, { method: 'post', body: data }).then(handleResponse))
 }
 
 function postJSON<T>(url: string, data: T) {
   return withRetry(() =>
-    fetch(url, {
+    fetch(API_BASE + url, {
       method: 'post',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(data),
@@ -231,4 +233,12 @@ export type NavigationState = {
     percentage: number
   }
   state: {}
+}
+
+export type WatchStanding = {
+  position: number
+  slotID: string
+  carClass: string
+  driverName: string
+  vehicleName: string
 }
