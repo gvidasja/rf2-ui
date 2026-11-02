@@ -87,6 +87,9 @@ public class Rest {
         if (v instanceof Number) {
             return Math.round(((Number) v).doubleValue());
         }
+        if (v instanceof Boolean) {
+            return ((Boolean) v) ? 1 : 0; // BOOL settings, e.g. SESSSET_run_warmup
+        }
         return Long.parseLong(String.valueOf(v));
     }
 }
