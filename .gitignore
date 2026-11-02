@@ -27,3 +27,11 @@ temp/
 # bundle build output
 /bundle/build/
 /bundle/dist/
+
+# reference: game code/data and local captures (regenerate with reference/*.ts)
+/reference/stock/
+/reference/generated/
+/reference/screenshots/
+/reference/.classes/
+/reference/.tmp/
+/reference/.tmp-ws/
