@@ -8,6 +8,7 @@ import { MainMenu } from '../MainMenu/MainMenu'
 import { MultiPlayer } from '../MultiPlayer/MultiPLayer'
 import { Profile } from '../Profile/Profile'
 import { Settings } from '../Settings/Settings'
+import { switchToStockUi } from '../stockUi'
 import { SinglePlayer } from '../SinglePlayer/SinglePlayer'
 import { Watch } from '../Watch/Watch'
 import styles from './App.module.css'
@@ -41,6 +42,7 @@ export function App() {
           <Breadcrumbs />
         </div>
         <div className={styles.Right}>
+          <button onClick={switchToStockUi}>OLD UI</button>
           <button onClick={quitGame}>EXIT</button>
         </div>
       </div>

@@ -26,6 +26,15 @@
       }
 
       (function () {
+        // "OLD UI" was chosen this game session (src/stockUi.ts): the game navigates here on its own
+        // at times, so keep sending it to the stock page.
+        try {
+          if (sessionStorage.getItem('rf2ui.stockUi') === '1') {
+            location.replace('/start/stock.html' + (location.hash || '#/start'))
+            return
+          }
+        } catch (e) {}
+
         var DEV = 'http://localhost:5173/rf2ui/'
         var PROD = '/rf2ui/'
 

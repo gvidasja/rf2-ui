@@ -96,8 +96,20 @@ async function build() {
   const tmp = join(out, ".stock");
   mkdirSync(tmp);
   await $`jar xf ${join(bundlesDir, "net.rfactor2.app.start.jar")} static/start/index.html`.cwd(tmp).quiet();
-  cpSync(join(tmp, "static", "start", "index.html"), join(out, "static", "start", "stock.html"));
+  const stock = readFileSync(join(tmp, "static", "start", "index.html"), "utf8");
   rmSync(tmp, { recursive: true });
+  // A way back to the new UI (clears the flag set by src/stockUi.ts).
+  const backButton = `
+<div id="rf2ui-back" style="position:fixed;right:4px;bottom:4px;z-index:99999;padding:2px 8px;font:12px sans-serif;color:#000;background:#fc0;border-radius:3px;cursor:pointer">NEW UI</div>
+<script>
+  document.getElementById('rf2ui-back').onclick = function () {
+    try { sessionStorage.removeItem('rf2ui.stockUi') } catch (e) {}
+    location.href = '/start/index.html'
+  }
+</script>
+`;
+  if (!stock.includes("</body>")) throw new Error("stock start page has no </body>");
+  writeFileSync(join(out, "static", "start", "stock.html"), stock.replace("</body>", backButton + "</body>"));
 
   const descriptors: string[] = [];
   for (const c of components) {
