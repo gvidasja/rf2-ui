@@ -368,6 +368,18 @@ export type ReplayReturns = "REPLAY_RFMnotFound" | "REPLAY_FileNameInvalid" | "R
 /** net.rfactor2.resources.ResourceRequest */
 export type ResourceRequest = "IMAGE_THUMBNAIL" | "IMAGE_SMALL" | "IMAGE_MEDIUM" | "IMAGE_LARGE" | "IMAGE_XLARGE" | "IMAGE_LOGO" | "DESCRIPTION";
 
+/** net.gvidasja.rf2ui.Rest$GridPosition */
+export interface RestGridPosition {
+  position: number;
+  slotId: number;
+}
+
+/** net.gvidasja.rf2ui.Rest$Kick */
+export interface RestKick {
+  reason?: string;
+  slot: number;
+}
+
 /** net.gvidasja.rf2ui.Rest$SetValue */
 export interface RestSetValue {
   value: number;
@@ -913,7 +925,10 @@ export interface Endpoints {
   "PUT /rest/replay/replaytime": { params: {}; body: number; response: void };
   "POST /rest/replay/resumedriving": { params: {}; body: never; response: void };
   "PUT /rest/replay/toggleactive": { params: {}; body: never; response: void };
+  "GET /rest/rf2ui/garage/meta": { params: {}; body: never; response: Record<string, unknown> };
   "GET /rest/rf2ui/ping": { params: {}; body: never; response: Record<string, unknown> };
+  "POST /rest/rf2ui/session/grid": { params: {}; body: RestGridPosition; response: void };
+  "POST /rest/rf2ui/session/kick": { params: {}; body: RestKick; response: void };
   "POST /rest/rf2ui/sessions/settings/{setting}": { params: { "setting": string }; body: RestSetValue; response: SessionsSetting };
   "POST /rest/rss": { params: {}; body: string; response: string /* base64 */ };
   "POST /rest/screenshot": { params: {}; body: ScreenshotRequest; response: string };

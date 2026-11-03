@@ -1,7 +1,13 @@
 package net.gvidasja.rf2ui;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import net.rfactor2.garage.GarageService;
+import net.rfactor2.garage.VehicleMod;
+import net.rfactor2.garage.WheelLoc;
+import net.rfactor2.garage.WheelMod;
+import net.rfactor2.netcomm.NetCommService;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -27,11 +33,23 @@ public class Rest {
     private static final SettingMode MODE = SettingMode.SETTING_GRANDPRIX;
     private static final int MAX_STEPS = 1000;
 
-    // Injected by Dependency Manager (see build.ts).
+    // Injected by Dependency Manager (see build.ts); all three are registered by the game bootstrap.
     private volatile SessionService m_sessionService;
+    private volatile GarageService m_garageService;
+    private volatile NetCommService m_netCommService;
 
     public static class SetValue {
         public long value;
+    }
+
+    public static class Kick {
+        public int slot;
+        public String reason;
+    }
+
+    public static class GridPosition {
+        public long slotId;
+        public int position;
     }
 
     @GET
@@ -40,7 +58,67 @@ public class Rest {
         Map<String, Object> m = new HashMap<>();
         m.put("bundle", "gvidasja.rf2ui");
         m.put("sessionService", m_sessionService != null);
+        m.put("garageService", m_garageService != null);
+        m.put("netCommService", m_netCommService != null);
         return m;
+    }
+
+    /**
+     * What GET /rest/garage/* leaves out: which setup values are locked (fixed-setup races, series rules)
+     * and the game's special labels. Keys match the stock garage keys ("VM_..." and "WM_...-W_FL").
+     * Settings with fewer than two values (not adjustable on this car) are skipped.
+     * Untested in game: call it from the garage screen only.
+     */
+    @GET
+    @Path("garage/meta")
+    public Map<String, Object> garageMeta() {
+        GarageService g = require(m_garageService, "garage");
+        Map<String, Object> settings = new LinkedHashMap<>();
+        for (VehicleMod mod : VehicleMod.values()) {
+            if (g.getNumberOfSettings(mod) < 2) continue;
+            settings.put(mod.name(), meta(g.isValueLocked(mod), g.getSpecialValue(mod)));
+        }
+        for (WheelMod mod : WheelMod.values()) {
+            for (WheelLoc loc : WheelLoc.values()) {
+                if (g.getWheelNumberOfSettings(loc, mod) < 2) continue;
+                settings.put(mod.name() + "-" + loc.name(), meta(g.isWheelValueLocked(loc, mod), g.getWheelSpecialValue(loc, mod)));
+            }
+        }
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("fixedSetupRace", g.isFixedSetupRace());
+        out.put("settings", settings);
+        return out;
+    }
+
+    private static Map<String, Object> meta(boolean locked, String special) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("locked", locked);
+        if (special != null && !special.isEmpty()) m.put("special", special);
+        return m;
+    }
+
+    /** Kick a driver (or AI) by slot id with a reason shown to them. Untested in game. */
+    @POST
+    @Path("session/kick")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void kick(Kick body) {
+        require(m_netCommService, "netcomm").kickSlot(body.slot, body.reason == null ? "" : body.reason);
+    }
+
+    /**
+     * Move a car on the starting grid: the native behind the server admin command
+     * "/editgrid &lt;position&gt; V:&lt;vehicle&gt;". Argument order (slot id, position) is inferred. Untested.
+     */
+    @POST
+    @Path("session/grid")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void editGrid(GridPosition body) {
+        require(m_netCommService, "netcomm").editGrid(body.slotId, body.position);
+    }
+
+    private static <T> T require(T service, String name) {
+        if (service == null) throw new WebApplicationException(name + " service not available", Response.Status.SERVICE_UNAVAILABLE);
+        return service;
     }
 
     /**

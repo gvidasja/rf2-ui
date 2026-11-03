@@ -14,6 +14,7 @@ export type Method = {
   isNative: boolean;
   calls: { owner: string; name: string }[];
   news: string[];
+  indy: boolean; // contains invokedynamic (lambdas)
 };
 export type ClassInfo = {
   name: string; // dotted, inner classes with $
@@ -91,6 +92,7 @@ export function parseJavap(text: string): ClassInfo[] {
           isNative: mods.has("native"),
           calls: [],
           news: [],
+          indy: false,
         };
         cur.methods.push(method);
       } else if (rest !== "{}" && rest.trim()) {
@@ -110,6 +112,7 @@ export function parseJavap(text: string): ClassInfo[] {
       }
       const nw = line.match(/\bnew\s+#\d+\s+\/\/ class ([\w/$]+)/);
       if (nw) method.news.push(nw[1].replaceAll("/", "."));
+      if (/invokedynamic/.test(line)) method.indy = true;
     }
   }
   return result;

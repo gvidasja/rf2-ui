@@ -49,6 +49,9 @@ const components: { id: string; lines: object[] }[] = [
         "osgi.jaxrs.resource": { type: "java.lang.Boolean", value: true },
       }),
       { dereference: "true", service: "net.rfactor2.sessions.SessionService", autoConfig: "m_sessionService", type: "ServiceDependency" },
+      // Registered by the game's bootstrap (rFactor2.jar) like SessionService.
+      { dereference: "true", service: "net.rfactor2.garage.GarageService", autoConfig: "m_garageService", type: "ServiceDependency" },
+      { dereference: "true", service: "net.rfactor2.netcomm.NetCommService", autoConfig: "m_netCommService", type: "ServiceDependency" },
     ],
   },
 ];
@@ -63,6 +66,8 @@ const imports = [
   'javax.ws.rs;version="[2.0,3)"',
   'javax.ws.rs.core;version="[2.0,3)"',
   'net.rfactor2.sessions;version="[1.0,2)"',
+  'net.rfactor2.garage;version="[1.0,2)"',
+  'net.rfactor2.netcomm;version="[1.0,2)"',
 ];
 
 // Jars the Java code compiles against; all are provided by the game at runtime.
