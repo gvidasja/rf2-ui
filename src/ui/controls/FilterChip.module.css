@@ -1,0 +1,22 @@
+.chip {
+  height: var(--h-control);
+  padding: 0 var(--sp-4);
+  border: 0;
+  border-radius: calc(var(--h-control) / 2);
+  background: var(--c-control);
+  color: var(--c-text-2);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip:hover {
+  background: var(--c-control-hi);
+}
+.on {
+  background: var(--c-selected-bg);
+  color: var(--c-on-light);
+}
+.on:hover {
+  background: var(--c-selected-bg);
+}

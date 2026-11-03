@@ -7,6 +7,8 @@ import { MainMenu, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
 import { Controls } from './screens/Controls'
 import { RaceSetup } from './screens/RaceSetup'
+import { Joined, OnlineFrame, OnlinePlaceholder } from './screens/online/Online'
+import { Servers } from './screens/online/Servers'
 import { Replays } from './screens/Replays'
 import { Settings } from './screens/Settings'
 import { Fullscreen } from './screens/session/Fullscreen'
@@ -97,6 +99,13 @@ function StartApp() {
             <Route path="race/car" element={<Routed id="race/car" element={<CarPicker />} />} />
             <Route path="race/track" element={<Routed id="race/track" element={<TrackPicker />} />} />
             <Route path="race/opponents" element={<Routed id="race/opponents" element={<Opponents />} />} />
+            <Route path="online" element={<OnlineFrame />}>
+              <Route index element={<Routed id="online" element={<Servers />} />} />
+              <Route path="joined" element={<Routed id="online/joined" element={<Joined />} />} />
+              <Route path="competitions" element={<Routed id="online/competitions" element={<OnlinePlaceholder section="competitions" />} />} />
+              <Route path="host" element={<Routed id="online/host" element={<OnlinePlaceholder section="host" />} />} />
+              <Route path="lobby" element={<Routed id="online/lobby" element={<OnlinePlaceholder section="lobby" />} />} />
+            </Route>
             <Route path="replays" element={<Routed id="replays" element={<Replays />} />} />
             <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
             <Route path="settings/controls" element={<Routed id="settings/controls" element={<Controls />} />} />
@@ -125,7 +134,7 @@ function Routed({ id, element, frame }: { id: string; element: React.ReactNode; 
 }
 
 // areas with new screens; the rest still open the stock UI
-const OWN_AREAS = ['race', 'replays', 'settings']
+const OWN_AREAS = ['race', 'online', 'replays', 'settings']
 
 function AreaFrame() {
   const navigate = useNavigate()

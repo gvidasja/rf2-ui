@@ -39,7 +39,9 @@ bun run dev
   shows the UI comes from Vite; edits hot-reload in the game. Only Java/loader changes need `game:install`.
 - **In a browser:** `http://localhost:5173/rf2ui/`. API calls are proxied to the running game.
 - **Without the game:** `MOCK=1 bun run dev` answers the API from the samples saved by `reference/dump.ts`
-  (`dev/mock.ts`; writes are kept in memory).
+  (`dev/mock.ts`; writes are kept in memory). It also simulates a running session, joining a server, and the
+  game's UI WebSocket on port 5397 (server lists from `reference/capture-servers.ts`, live wheel and pedal input).
+  The game must not be running then.
 - DevTools for the in-game page: add `--remote-debugging-port=9222` to the game's launch options and open
   `http://localhost:9222`.
 

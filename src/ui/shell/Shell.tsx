@@ -94,12 +94,21 @@ export function TopBar({ tabs, current, onTab, children }: { tabs: Tab[]; curren
   )
 }
 
-/** A row of tabs; Q / E (LB / RB) move to the previous / next one, wrapping around. */
-function Tabs({ tabs, current, onTab, label }: { tabs: Tab[]; current: string; onTab: (id: string) => void; label: string }) {
+/** A second row of tabs under the top bar (sections of an area); Q / E stay with the area tabs. */
+export function SubNav({ tabs, current, onTab, label }: { tabs: Tab[]; current: string; onTab: (id: string) => void; label: string }) {
+  return (
+    <div className={styles.subnav}>
+      <Tabs tabs={tabs} current={current} onTab={onTab} label={label} keys={false} />
+    </div>
+  )
+}
+
+/** A row of tabs; Q / E (LB / RB) move to the previous / next one, wrapping around (unless `keys` is false). */
+function Tabs({ tabs, current, onTab, label, keys = true }: { tabs: Tab[]; current: string; onTab: (id: string) => void; label: string; keys?: boolean }) {
   const i = Math.max(0, tabs.findIndex((t) => t.id === current))
   const n = tabs.length
-  useAction('tabPrev', n > 1 && (() => onTab(tabs[(i - 1 + n) % n].id)), label === 'Areas' ? 'Area' : 'Tab')
-  useAction('tabNext', n > 1 && (() => onTab(tabs[(i + 1) % n].id)))
+  useAction('tabPrev', keys && n > 1 && (() => onTab(tabs[(i - 1 + n) % n].id)), label === 'Areas' ? 'Area' : 'Tab')
+  useAction('tabNext', keys && n > 1 && (() => onTab(tabs[(i + 1) % n].id)))
   return (
     <nav className={styles.tabs} aria-label={label}>
       {tabs.map((t) => (

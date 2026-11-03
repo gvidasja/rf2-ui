@@ -66,13 +66,17 @@ coming back, full screen (the 3D view lines up with the hole at 1920×1080).
 12. Online — Competition System: account sign-up, hub, event, schedule, history & results, leaderboards & stats, career
 
 Status (P1, in progress): checked in a browser only (`MOCK=1 bun run dev` now simulates a running session).
-- Done: live timing tab (10), settings on one page (8, menu and session), controls (9), replays (11).
+- Done: live timing tab (10), settings on one page (8, menu and session), controls (9), replays (11), online server
+  browser and joining (7: lists, filters, favourites, password, download progress, then car / drive / spectate / leave).
+- Under construction (placeholders that open the stock UI): competitions (12), host a server, private lobby, content,
+  profile. Hosting spends paid minutes and lobbies act on the account, so they stay stock until decided otherwise.
+- Not yet: in-session chat and car change (online only), notifications, online status in the top bar.
 - Untested in game: controller names in bindings (`JOY<n>` is assumed to be the n-th entry of
   `/rest/options/joysticks`), the live input meters (WebSocket topic `InputData`), calibration, assigning, watching a
   replay and what the event page should offer in replay mode (stock: "resume driving" instead of Drive).
 - In-session car change exists only online (stock shows it in multiplayer practice); it belongs to 7.
-- Online (7, 12) needs the game online: server lists arrive over the UI WebSocket (topics `InternetServerList`,
-  `FavoritesServerList`, …), lobbies use Nakama, hosting spends paid minutes.
+- Server lists arrive over the UI WebSocket (`GET_ASYNC` on `InternetServerList` etc.); `reference/capture-servers.ts`
+  records them for the mock. Joining was only tried in the mock: the real join, download and car pick are untested.
 
 **P2 — completeness**
 13. Content (packages, updates, workshop)

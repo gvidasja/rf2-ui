@@ -5,7 +5,7 @@ import { useSessionAmounts, useSessionSettings } from '../api/sessions'
 import { liveryName } from '../race/content'
 import { carModelName, sessionSummary } from '../race/summary'
 import { switchToStockUi } from '../stockUi'
-import { Button, ConfirmButton, EmptyState, Grid, MainMenuLayout, Media, PrimaryButton, Stack, StatusIndicator, Text, TrackMap, type MenuItem } from '../ui'
+import { Button, ConfirmButton, EmptyState, Grid, MainMenuLayout, Media, PrimaryButton, Stack, StatusIndicator, Text, TrackMap, UnderConstruction, type MenuItem } from '../ui'
 
 /** One list of destinations on the left; the right side previews the focused one. */
 export function MainMenu() {
@@ -19,8 +19,8 @@ export function MainMenu() {
   const stock = (id: string, label: string, hint?: string): MenuItem => ({ id, label, hint, onOpen: () => navigate(`/stock/${id}`) })
   const items: MenuItem[] = [
     { id: 'race', label: 'Race', hint: sel?.track ? `${carModelName(sel)} · ${sel.track.shortName ?? ''}` : undefined, onOpen: () => navigate('/race') },
-    stock('online', 'Online servers'),
-    stock('competitions', 'Competitions'),
+    { id: 'online', label: 'Online servers', onOpen: () => navigate('/online') },
+    { id: 'competitions', label: 'Competitions', onOpen: () => navigate('/online/competitions') },
     { id: 'replays', label: 'Replays', onOpen: () => navigate('/replays') },
     stock('content', 'Content'),
     { id: 'settings', label: 'Settings', onOpen: () => navigate('/settings') },
@@ -87,10 +87,13 @@ function RaceTrackMap() {
 }
 
 /** Areas not rebuilt yet: say so and offer the stock screen. */
+/** An area that is not rebuilt yet; the stock UI still has it. */
 export function StockArea({ name }: { name: string }) {
   return (
-    <EmptyState title={`${name} isn’t rebuilt yet`} action={<Button variant="primary" onClick={switchToStockUi}>Open the stock UI</Button>}>
-      The stock UI stays active until the game restarts; its NEW UI button brings you back.
-    </EmptyState>
+    <UnderConstruction
+      name={name}
+      plan="Until then the stock UI has it; its NEW UI button brings you back."
+      action={<Button variant="primary" onClick={switchToStockUi}>Open the stock UI</Button>}
+    />
   )
 }

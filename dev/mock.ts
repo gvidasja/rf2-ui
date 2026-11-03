@@ -6,10 +6,16 @@ import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
 import { liveStandings } from './mockLive'
+import { serveMockSocket } from './mockSocket'
 
 const SAMPLES = join(import.meta.dirname, '..', 'reference', 'generated', 'samples')
 
 const state = new Map<string, unknown>()
+let joining: { at: number; ok: boolean } | undefined
+// the game's own port: the page connects there directly (see src/api/socket.ts); the game isn't running in MOCK mode
+const SOCKET_PORT = 5397
+// survives Vite's config reloads, which re-run this module while the old server still holds the port
+const shared = globalThis as { rf2uiMockSocket?: unknown; rf2uiMockSample?: (name: string) => unknown }
 
 function sample(name: string): unknown {
   if (state.has(name)) return state.get(name)
@@ -26,6 +32,8 @@ export function mockGame(): Plugin {
     name: 'rf2ui:mock',
     apply: 'serve',
     configureServer(server) {
+      shared.rf2uiMockSample = sample
+      shared.rf2uiMockSocket ??= serveMockSocket(SOCKET_PORT, (n) => shared.rf2uiMockSample!(n))
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url ?? '/', 'http://x')
         if (!/^\/(rest|navigation)\//.test(url.pathname)) return next()
@@ -48,6 +56,22 @@ export function mockGame(): Plugin {
           if (/^\/rest\/race\/track\/[^/]+\/trackmap$/.test(p)) {
             const nav = sample('navigation_state') as { loadingStatus?: { track?: { trackmap?: unknown } } }
             return json(nav?.loadingStatus?.track?.trackmap ?? [])
+          }
+          // joining: details, a short download, then joined; a password server accepts "test"
+          if (p === '/rest/multiplayer/join') {
+            const pw = url.searchParams.get('password') ?? ''
+            joining = { at: Date.now(), ok: pw === '' || pw === 'test' }
+            return json(undefined)
+          }
+          if (p.startsWith('/rest/multiplayer/join/')) {
+            const t = joining ? Date.now() - joining.at : Infinity
+            const state = !joining ? 'JOIN_IDLE' : t < 800 ? 'JOIN_GETTING_DETAILS' : !joining.ok ? 'JOIN_INVALID_PASSWORD' : t < 3500 ? 'JOIN_DOWNLOADING_CONTENT_IN_PROGRESS' : 'JOIN_JOINED_SERVER'
+            const part = p.slice('/rest/multiplayer/join/'.length)
+            if (part === 'state') return json(state)
+            if (part === 'downloadname') return json('Zandvoort 2021 (mock)')
+            if (part === 'downloadnumber') return json(1)
+            if (part === 'downloadpercent') return json(Math.min(100, Math.max(0, Math.round(((t - 800) / 2700) * 100))))
+            if (part === 'error') return json('')
           }
           if (p === '/rest/watch/standings' && process.env.MOCK !== 'static') {
             return json(liveStandings(sample('rest_watch_standings') as Parameters<typeof liveStandings>[0], (sample('rest_watch_trackmap') ?? []) as Parameters<typeof liveStandings>[1]))
