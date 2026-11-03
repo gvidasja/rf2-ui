@@ -1,0 +1,14 @@
+.sb {
+  color: var(--c-session-best);
+  font-weight: 700;
+}
+.pb {
+  color: var(--c-personal-best);
+  font-weight: 700;
+}
+.tag {
+  margin-left: 4px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  vertical-align: 2px;
+}

@@ -12,6 +12,7 @@ import { Monitor } from './screens/session/Monitor'
 import { Results } from './screens/session/Results'
 import { SessionControls } from './screens/session/SessionControls'
 import { SessionFrame } from './screens/session/SessionFrame'
+import { Timing } from './screens/session/Timing'
 import { TrackPicker } from './screens/TrackPicker'
 import { AppRoot, Frame, Screen, TopBar, useAction, type Tab } from './ui'
 
@@ -55,6 +56,7 @@ function EventApp() {
         <Routes>
           <Route element={<SessionFrame />}>
             <Route index element={<Screen id="event/monitor"><Monitor /></Screen>} />
+            <Route path="timing" element={<Screen id="event/timing"><Timing /></Screen>} />
             <Route path="garage" element={<Screen id="event/garage"><Garage /></Screen>} />
             <Route path="session" element={<Screen id="event/session"><SessionControls /></Screen>} />
             <Route path="results" element={<Screen id="event/results"><Results /></Screen>} />

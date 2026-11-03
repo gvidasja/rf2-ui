@@ -52,6 +52,10 @@
   --c-error-bg: #3d1717;
   --c-row-selected: #2a2219;
   --c-toggle-off: #3a4048;
+  --c-trackmap-dim: #5a626c;
+  /* timing: session best (purple) and personal best (green); always paired with SB / PB text */
+  --c-session-best: #cdb4ff;
+  --c-personal-best: var(--c-good);
   --shadow-popup: 0 12px 32px rgba(0, 0, 0, 0.6);
 
   /* type */

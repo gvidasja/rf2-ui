@@ -6,6 +6,7 @@ import { Chip, ConfirmButton, Frame, PrimaryButton, SessionBar, type Tab } from 
 
 const SESSION_TABS: Tab[] = [
   { id: '/', label: 'Monitor' },
+  { id: '/timing', label: 'Timing' },
   { id: '/garage', label: 'Garage' },
   { id: '/session', label: 'Session' },
   { id: '/results', label: 'Results' },

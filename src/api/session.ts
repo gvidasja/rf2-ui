@@ -1,5 +1,5 @@
 // In-session data and actions (the event page).
-import type { CameraType, ReplayCommand, SessionInfo, Setting, Setup, Vehicle } from '../../reference/rf2-api'
+import type { CameraType, ReplayCommand, SessionInfo, Setting, Setup, Vehicle, Waypoint } from '../../reference/rf2-api'
 import type { TransportCommand } from '../ui'
 import { get, postJson, postText } from './http'
 import { invalidate, mutate, usePolled, useResource } from './resource'
@@ -107,3 +107,8 @@ export async function loadDefaultSetup() {
   await postText('/rest/garage/setup/default')
   invalidate(GARAGE_KEY)
 }
+
+// Live timing
+const loadWatchTrackMap = () => get<Waypoint[]>('/rest/watch/trackmap')
+/** The current track's waypoints (same world coordinates as Vehicle.carPosition). */
+export const useWatchTrackMap = () => useResource('watch/trackmap', loadWatchTrackMap)

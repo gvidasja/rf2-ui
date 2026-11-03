@@ -1,9 +1,11 @@
 // `MOCK=1 bun run dev`: serves the game API from the samples saved by reference/dump.ts
 // (reference/generated/samples, gitignored), so the UI can be developed and screenshotted without the game.
-// Writes are kept in memory so steppers and pickers behave.
+// Writes are kept in memory so steppers and pickers behave. Standings are a simulated running session
+// (dev/mockLive.ts); `MOCK=static` serves the saved sample instead.
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
+import { liveStandings } from './mockLive'
 
 const SAMPLES = join(import.meta.dirname, '..', 'reference', 'generated', 'samples')
 
@@ -46,6 +48,9 @@ export function mockGame(): Plugin {
           if (/^\/rest\/race\/track\/[^/]+\/trackmap$/.test(p)) {
             const nav = sample('navigation_state') as { loadingStatus?: { track?: { trackmap?: unknown } } }
             return json(nav?.loadingStatus?.track?.trackmap ?? [])
+          }
+          if (p === '/rest/watch/standings' && process.env.MOCK !== 'static') {
+            return json(liveStandings(sample('rest_watch_standings') as Parameters<typeof liveStandings>[0], (sample('rest_watch_trackmap') ?? []) as Parameters<typeof liveStandings>[1]))
           }
           if (/\/(image|thumbnail)$/.test(p)) return res.writeHead(404).end()
           return json(sample(nameFor(p)))

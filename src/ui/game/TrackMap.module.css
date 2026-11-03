@@ -28,3 +28,23 @@
   color: var(--c-muted);
   font-size: var(--fs-label);
 }
+.dim {
+  stroke: var(--c-trackmap-dim);
+}
+.marker circle {
+  fill: var(--c-text);
+  stroke: var(--c-surface-head);
+  stroke-width: 4;
+}
+.marker text {
+  fill: var(--c-on-light);
+  font-size: 26px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.you circle {
+  fill: var(--c-action);
+}
+.focus circle {
+  fill: var(--c-info);
+}
