@@ -57,9 +57,7 @@
   font-size: var(--fs-secondary);
   cursor: pointer;
 }
-.transportBtn:focus {
-  outline-offset: -3px;
-}
+
 .transportGap {
   flex: 1 1 auto;
 }

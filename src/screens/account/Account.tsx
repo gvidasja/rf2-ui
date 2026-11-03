@@ -17,22 +17,18 @@ export function OnlineStatusText() {
   return <StatusIndicator kind={kind}>{text}</StatusIndicator>
 }
 
-/** Top bar: online status and the notifications button (with the unread count). */
-export function AccountBar() {
+/** Bottom of the menu rail: the notifications button (with the unread count), when online. */
+export function NotificationsButton() {
   const navigate = useNavigate()
   const { data: status } = useOnlineStatus()
   const { data: list } = useNotifications(status?.kind === 'online')
   const seen = lastSeenNotification()
   const unread = (list ?? []).filter((n) => n.dateFrom > seen).length
+  if (status?.kind !== 'online') return null
   return (
-    <Stack row gap={4}>
-      <OnlineStatusText />
-      {status?.kind === 'online' && (
-        <Button size="s" variant="quiet" onClick={() => navigate('/notifications')} navId="notifications">
-          {unread ? `Notifications · ${unread}` : 'Notifications'}
-        </Button>
-      )}
-    </Stack>
+    <Button variant="quiet" full onClick={() => navigate('/notifications')} navId="notifications">
+      {unread ? `Notifications · ${unread}` : 'Notifications'}
+    </Button>
   )
 }
 

@@ -10,13 +10,11 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.chip:hover {
-  background: var(--c-control-hi);
-}
 .on {
   background: var(--c-selected-bg);
   color: var(--c-on-light);
 }
-.on:hover {
-  background: var(--c-selected-bg);
+.on:hover,
+.on:focus {
+  box-shadow: var(--hover-tint-on-light);
 }

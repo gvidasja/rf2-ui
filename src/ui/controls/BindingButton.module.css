@@ -6,7 +6,7 @@
   max-width: 420px;
   height: var(--h-control);
   padding: 0 var(--sp-3);
-  border: 0;
+  border: 2px solid transparent;
   border-radius: var(--radius-m);
   background: var(--c-control);
   color: var(--c-text);
@@ -17,19 +17,16 @@
   text-overflow: ellipsis;
   cursor: pointer;
 }
-.binding:hover {
-  background: var(--c-control-hi);
-}
 .empty {
   color: var(--c-disabled);
 }
 .listening {
-  box-shadow: inset 0 0 0 2px var(--c-warn);
+  border-color: var(--c-warn);
   color: var(--c-warn);
   cursor: default;
 }
 .conflict {
-  box-shadow: inset 0 0 0 2px var(--c-error);
+  border-color: var(--c-error);
 }
 .note {
   margin-left: var(--sp-2);

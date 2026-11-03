@@ -42,6 +42,11 @@
   --c-action-text: #ff8a5c;
   --c-action-bg: #3a1e12;
   --c-focus: rgba(255, 255, 255, 0.45);
+  /* hover and keyboard / controller focus: a tint over the element's own background */
+  --c-hover: rgba(255, 255, 255, 0.1);
+  --c-hover-on-light: rgba(0, 0, 0, 0.14);
+  --hover-tint: inset 0 0 0 100vmax var(--c-hover);
+  --hover-tint-on-light: inset 0 0 0 100vmax var(--c-hover-on-light);
   --c-good: #6fd9a4;
   --c-good-bg: #173226;
   --c-warn: #f5c451;
@@ -79,8 +84,6 @@
   --radius-l: 8px;
   --border: 0;
   --hairline: 1px solid var(--c-hairline);
-  --focus-ring: 2px solid var(--c-focus);
-  --focus-offset: 1px;
 
   /* space */
   --sp-1: 4px;
@@ -103,7 +106,10 @@
   --h-topbar: 64px;
   --h-subnav: 56px;
   --h-hintbar: 40px;
-  --w-menu: 560px;
+  /* the menu rail on every menu screen */
+  --h-menu-item: 60px;
+  --fs-menu-item: 22px;
+  --fs-menu-brand: 30px;
 
   /* The native 3D monitor (UI.OSC MONITORPAGE, in the 1920×1080 layout). Fixed by the game. */
   --monitor-x: 30px;
@@ -160,10 +166,21 @@ textarea {
   color: inherit;
 }
 
-/* One always-visible focus ring (Keyboard & controller board, rule 1). */
+/*
+  No outlines: the focused element (keyboard / controller) looks exactly like the hovered one, with a
+  highlighted background. Elements with a light background use the dark tint; table rows tint their cells.
+*/
 :focus {
-  outline: var(--focus-ring);
-  outline-offset: var(--focus-offset);
+  outline: none;
+}
+button:not(:disabled):hover,
+button:focus,
+a:hover,
+a:focus,
+input:focus,
+[tabindex='0']:hover,
+[tabindex='0']:focus {
+  box-shadow: var(--hover-tint);
 }
 
 ::-webkit-scrollbar {

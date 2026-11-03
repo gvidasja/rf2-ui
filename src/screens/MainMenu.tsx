@@ -1,93 +1,68 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { carImage, quitGame, startRace, useProfile, useSelection, useTrackMap } from '../api/race'
-import { useSessionAmounts, useSessionSettings } from '../api/sessions'
-import { liveryName } from '../race/content'
-import { carModelName, sessionSummary } from '../race/summary'
-import { OnlineStatusText } from './account/Account'
+import { useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { quitGame, useProfile } from '../api/race'
+import { NotificationsButton, OnlineStatusText } from './account/Account'
+import { AREAS } from './areas'
 import { switchToStockUi } from '../stockUi'
-import { Button, ConfirmButton, EmptyState, Grid, MainMenuLayout, Media, PrimaryButton, Stack, Text, TrackMap, UnderConstruction, type MenuItem } from '../ui'
+import { Button, ConfirmButton, Frame, MainMenuLayout, Stack, UnderConstruction, type MenuItem } from '../ui'
 
-/** One list of destinations on the left; the right side previews the focused one. */
-export function MainMenu() {
+/**
+ * Every menu screen: the rail of areas on the left, the current area's screen on the right. The home
+ * screen is the rail alone.
+ */
+export function MenuFrame() {
   const navigate = useNavigate()
-  const { data: sel } = useSelection()
-  const { data: settings } = useSessionSettings()
-  const { data: amounts } = useSessionAmounts()
+  const { pathname } = useLocation()
   const { data: profile } = useProfile()
-  const [focused, setFocused] = useState('race')
-
-  const stock = (id: string, label: string, hint?: string): MenuItem => ({ id, label, hint, onOpen: () => navigate(`/stock/${id}`) })
-  const items: MenuItem[] = [
-    { id: 'race', label: 'Race', hint: sel?.track ? `${carModelName(sel)} · ${sel.track.shortName ?? ''}` : undefined, onOpen: () => navigate('/race') },
-    { id: 'online', label: 'Online servers', onOpen: () => navigate('/online') },
-    { id: 'competitions', label: 'Competitions', onOpen: () => navigate('/online/competitions') },
-    { id: 'replays', label: 'Replays', onOpen: () => navigate('/replays') },
-    stock('content', 'Content'),
-    { id: 'settings', label: 'Settings', onOpen: () => navigate('/settings') },
-    stock('profile', 'Profile', profile?.nick ?? profile?.name),
-  ]
-
-  const start = () => {
-    void startRace()
-    navigate('/loading')
-  }
+  const current = AREAS.find((a) => pathname === a.path || pathname.startsWith(`${a.path}/`))?.id
+  const items: MenuItem[] = AREAS.map((a) => ({
+    id: a.id,
+    label: a.label,
+    sub:
+      a.id === 'profile' ? (
+        <Stack gap={1}>
+          {(profile?.nick ?? profile?.name) && <span>{profile?.nick ?? profile?.name}</span>}
+          <OnlineStatusText />
+        </Stack>
+      ) : undefined,
+    onOpen: () => navigate(a.path, { replace: pathname !== '/' }),
+  }))
+  const home = pathname === '/'
+  // the home screen has no content to focus: start on the rail
+  useEffect(() => {
+    if (!home) return
+    const t = window.setTimeout(() => {
+      const el = document.activeElement
+      if (!el || el === document.body || !el.closest('nav')) document.querySelector<HTMLElement>('[data-nav-id^="menu-"][data-autofocus]')?.focus()
+    }, 50)
+    return () => window.clearTimeout(t)
+  }, [home])
 
   return (
-    <MainMenuLayout
-      items={items}
-      focused={focused}
-      onFocusItem={setFocused}
-      bottom={
-        <Stack gap={2}>
-          <Button variant="quiet" full onClick={switchToStockUi} navId="stock-ui">
-            Switch to the stock UI
-          </Button>
-          <ConfirmButton variant="quiet" full question="Quit rFactor 2?" confirmLabel="Quit" onConfirm={() => void quitGame()}>
-            Quit
-          </ConfirmButton>
-        </Stack>
-      }
-      footer={<OnlineStatusText />}
-    >
-      {focused === 'race' ? (
-        <Stack grow gap={6} pad={[8, 9]}>
-          <Stack gap={3}>
-            <Text variant="label">Race · single player</Text>
-            <Text variant="display">{sel?.car && sel.track ? `${carModelName(sel)} at ${sel.track.name}` : 'Race'}</Text>
-            <Text variant="title" tone="muted">
-              {sessionSummary(settings, amounts)}
-            </Text>
-          </Stack>
-          <Grid grow columns={2} gap={6}>
-            <Media src={carImage(sel?.car)} label={sel?.car ? liveryName(sel.car) : 'Car'} height="100%" />
-            <RaceTrackMap />
-          </Grid>
-          <Stack row gap={4}>
-            <PrimaryButton size="l" onClick={start} navId="start">
-              Start race
-            </PrimaryButton>
-            <Button size="l" onClick={() => navigate('/race')} navId="setup">
-              Change setup
+    <Frame hints={home ? ['move', 'select'] : undefined}>
+      <MainMenuLayout
+        items={items}
+        current={current}
+        autoFocus={home}
+        onHome={() => navigate('/')}
+        bottom={
+          <Stack gap={2}>
+            <NotificationsButton />
+            <Button variant="quiet" full onClick={switchToStockUi} navId="stock-ui">
+              Switch to the stock UI
             </Button>
+            <ConfirmButton variant="quiet" full question="Quit rFactor 2?" confirmLabel="Quit" onConfirm={() => void quitGame()}>
+              Quit
+            </ConfirmButton>
           </Stack>
-        </Stack>
-      ) : (
-        <EmptyState title={items.find((i) => i.id === focused)?.label ?? ''}>
-          Not rebuilt yet: this opens the stock screen (P1/P2 in the plan).
-        </EmptyState>
-      )}
-    </MainMenuLayout>
+        }
+      >
+        <Outlet />
+      </MainMenuLayout>
+    </Frame>
   )
 }
 
-function RaceTrackMap() {
-  const { data: sel } = useSelection()
-  const { data: map } = useTrackMap(sel?.track?.id)
-  return <TrackMap points={map} label={`Map of ${sel?.track?.name ?? 'the track'}`} height="100%" />
-}
-
-/** Areas not rebuilt yet: say so and offer the stock screen. */
 /** An area that is not rebuilt yet; the stock UI still has it. */
 export function StockArea({ name }: { name: string }) {
   return (

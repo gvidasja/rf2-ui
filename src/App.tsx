@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { HashRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { navigationState, preloadContent, useProfile } from './api/race'
-import { AccountBar, Notifications } from './screens/account/Account'
+import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { navigationState, preloadContent } from './api/race'
+import { Notifications } from './screens/account/Account'
 import { CarPicker } from './screens/CarPicker'
 import { Loading } from './screens/Loading'
-import { MainMenu, StockArea } from './screens/MainMenu'
+import { areaLabel } from './screens/areas'
+import { MenuFrame, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
 import { Controls } from './screens/Controls'
 import { RaceSetup } from './screens/RaceSetup'
@@ -21,15 +22,8 @@ import { SessionControls } from './screens/session/SessionControls'
 import { SessionFrame } from './screens/session/SessionFrame'
 import { Timing } from './screens/session/Timing'
 import { TrackPicker } from './screens/TrackPicker'
-import { AppRoot, Frame, Screen, TopBar, useAction, type Tab } from './ui'
+import { AppRoot, Frame, Screen, useAction } from './ui'
 
-const AREAS: Tab[] = [
-  { id: 'race', label: 'Race' },
-  { id: 'online', label: 'Online' },
-  { id: 'replays', label: 'Replays' },
-  { id: 'content', label: 'Content' },
-  { id: 'settings', label: 'Settings' },
-]
 
 /**
  * The game shows three native pages, all served the same loader: /start (menus), /event (in a session)
@@ -98,8 +92,8 @@ function StartApp() {
         <BackToPrevious />
         <ResumeJoined />
         <Routes>
-          <Route index element={<Routed id="menu" frame="bare" element={<MainMenu />} />} />
-          <Route element={<AreaFrame />}>
+          <Route element={<MenuFrame />}>
+            <Route index element={null} />
             <Route path="race" element={<Routed id="race" element={<RaceSetup />} />} />
             <Route path="race/car" element={<Routed id="race/car" element={<CarPicker />} />} />
             <Route path="race/track" element={<Routed id="race/track" element={<TrackPicker />} />} />
@@ -150,31 +144,9 @@ function Routed({ id, element, frame }: { id: string; element: React.ReactNode; 
   return frame === 'bare' ? <Frame hints={id === 'menu' ? ['move', 'select'] : []}>{screen}</Frame> : screen
 }
 
-// areas with new screens; the rest still open the stock UI
-const OWN_AREAS = ['race', 'online', 'replays', 'settings']
-
-function AreaFrame() {
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
-  const { data: profile } = useProfile()
-  const area = pathname.startsWith('/stock/') ? pathname.slice(7) : (OWN_AREAS.find((a) => pathname.startsWith(`/${a}`)) ?? 'race')
-  return (
-    <Frame
-      top={
-        <TopBar tabs={AREAS} current={area} onTab={(id) => navigate(OWN_AREAS.includes(id) ? `/${id}` : `/stock/${id}`, { replace: true })}>
-          <AccountBar />
-        </TopBar>
-      }
-      status={profile?.nick ?? profile?.name}
-    >
-      <Outlet />
-    </Frame>
-  )
-}
-
 function StockRoute() {
   const { area = '' } = useParams()
-  const name = AREAS.find((a) => a.id === area)?.label ?? area.charAt(0).toUpperCase() + area.slice(1)
+  const name = areaLabel(area) ?? area.charAt(0).toUpperCase() + area.slice(1)
   return (
     <Screen id={`stock/${area}`}>
       <StockArea name={name} />

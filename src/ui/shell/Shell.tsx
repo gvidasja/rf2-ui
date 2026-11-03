@@ -191,44 +191,59 @@ export function StatusIndicator({ kind, children }: { kind: StatusKind; children
   )
 }
 
-export type MenuItem = { id: string; label: string; hint?: ReactNode; onOpen: () => void }
+/** `sub`: a second line under the label (e.g. the player name and online status under Profile). */
+export type MenuItem = { id: string; label: string; sub?: ReactNode; onOpen: () => void }
 
 /**
- * The main menu: one vertical list (↑ ↓ choose, Enter open) and a preview pane for the focused item.
+ * The menu rail on every menu screen: one vertical list of areas (↑ ↓ choose, Enter open), the current
+ * area highlighted, its screen on the right.
  * `bottom` sits at the bottom of the list (Quit), `footer` below it (status).
  */
 export function MainMenuLayout({
   items,
   bottom,
   footer,
-  focused,
-  onFocusItem,
+  current,
+  autoFocus,
+  onHome,
   children,
 }: {
+  /** the logo goes to the home screen */
+  onHome?: () => void
   items: MenuItem[]
   bottom?: ReactNode
   footer?: ReactNode
-  focused: string
-  onFocusItem: (id: string) => void
-  children: ReactNode
+  /** the area shown on the right (highlighted) */
+  current?: string
+  /** take the screen's first focus (the home screen, where the rail is all there is) */
+  autoFocus?: boolean
+  children?: ReactNode
 }) {
+  // Q / E (LB / RB) step through the areas, like tabs
+  const i = items.findIndex((m) => m.id === current)
+  const n = items.length
+  useAction('tabPrev', n > 1 && (() => items[(i <= 0 ? n : i) - 1].onOpen()), 'Area')
+  useAction('tabNext', n > 1 && (() => items[(i + 1) % n].onOpen()))
   return (
     <div className={styles.menuLayout}>
       <nav className={styles.menu} aria-label="Main menu">
-        <div className={styles.menuBrand}>rFactor 2</div>
-        {items.map((m, i) => (
+        <button type="button" className={styles.menuBrand} onClick={onHome} data-nav-id="menu-home" aria-label="Home">
+          rFactor 2
+        </button>
+        {items.map((m, k) => (
           <button
             key={m.id}
             type="button"
-            className={cx(styles.menuItem, m.id === focused && styles.menuItemOn)}
-            aria-current={m.id === focused || undefined}
+            className={cx(styles.menuItem, m.id === current && styles.menuItemOn)}
+            aria-current={m.id === current ? 'page' : undefined}
             data-nav-id={`menu-${m.id}`}
-            data-autofocus={i === 0 || undefined}
-            onFocus={() => onFocusItem(m.id)}
+            data-autofocus={(autoFocus && (current ? m.id === current : k === 0)) || undefined}
             onClick={m.onOpen}
           >
-            <span>{m.label}</span>
-            {m.hint != null && <span className={styles.menuHint}>{m.hint}</span>}
+            <span className={styles.menuLabel}>
+              <span>{m.label}</span>
+              {m.sub != null && <span className={styles.menuSub}>{m.sub}</span>}
+            </span>
           </button>
         ))}
         <span className={styles.menuGap} />

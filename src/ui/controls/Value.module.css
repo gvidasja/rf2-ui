@@ -89,6 +89,10 @@
   background: var(--c-selected-bg);
   color: var(--c-on-light);
 }
+.segOn:hover,
+.segOn:focus {
+  box-shadow: var(--hover-tint-on-light);
+}
 .segDanger {
   background: var(--c-error);
   color: var(--c-on-light);

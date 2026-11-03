@@ -30,9 +30,7 @@
 .item > * + * {
   margin-left: var(--sp-3);
 }
-.item:focus {
-  outline-offset: -3px;
-}
+
 .itemLabel {
   flex: 1 1 auto;
   min-width: 0;
@@ -50,7 +48,10 @@
   background: var(--c-row-selected);
   color: var(--c-text);
   font-weight: var(--fw-medium);
-  box-shadow: inset 4px 0 0 var(--c-action);
+  /* left accent bar */
+  background-image: linear-gradient(var(--c-action), var(--c-action));
+  background-size: 4px 100%;
+  background-repeat: no-repeat;
 }
 .item:disabled {
   color: var(--c-disabled);
@@ -94,8 +95,13 @@
 .rowAction {
   cursor: pointer;
 }
+.rowAction:hover,
 .rowAction:focus {
-  outline-offset: -3px;
+  box-shadow: none;
+}
+.rowAction:hover td,
+.rowAction:focus td {
+  box-shadow: var(--hover-tint);
 }
 .you td {
   background: var(--c-row-selected);
