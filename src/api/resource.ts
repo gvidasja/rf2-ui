@@ -105,10 +105,11 @@ export function preload<T>(key: string, loader: () => Promise<T>) {
   ensure(key, loader)
 }
 
-/** useResource that refetches every `ms` while mounted (live session data). */
-export function usePolled<T>(key: string, loader: () => Promise<T>, ms: number): Resource<T> {
+/** useResource that refetches every `ms` while mounted (live session data); a null key does nothing. */
+export function usePolled<T>(key: string | null, loader: () => Promise<T>, ms: number): Resource<T> {
   const r = useResource(key, loader)
   useEffect(() => {
+    if (!key) return
     const t = window.setInterval(() => invalidate(key), ms)
     return () => window.clearInterval(t)
   }, [key, ms])

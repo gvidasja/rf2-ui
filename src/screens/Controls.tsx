@@ -34,7 +34,9 @@ function axisView(axis: AxisDef, data: InputData[] | undefined, limits: AxisLimi
     .filter((x): x is number => typeof x === 'number' && x >= 0)
     .map((x) => share(x, d.minValue, d.maxValue)) as [number, number]
   const calib = d.calibValue ?? 0
-  const text = axis.centered ? `${calib < 0 ? 'L' : calib > 0 ? 'R' : ''} ${Math.round(Math.abs(calib) * 100)} %`.trim() : `${Math.round(calib * 100)} %`
+  const pct = Math.round(Math.abs(calib) * 100)
+  // steering: side only when off centre after rounding
+  const text = axis.centered ? (pct ? `${calib < 0 ? 'L' : 'R'} ${pct} %` : 'Centre') : `${Math.round(calib * 100)} %`
   return { value, text, range: range.length === 2 ? range : undefined }
 }
 

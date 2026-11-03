@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { HashRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { preloadContent, useProfile } from './api/race'
+import { navigationState, preloadContent, useProfile } from './api/race'
+import { AccountBar, Notifications } from './screens/account/Account'
 import { CarPicker } from './screens/CarPicker'
 import { Loading } from './screens/Loading'
 import { MainMenu, StockArea } from './screens/MainMenu'
@@ -11,6 +12,7 @@ import { Joined, OnlineFrame, OnlinePlaceholder } from './screens/online/Online'
 import { Servers } from './screens/online/Servers'
 import { Replays } from './screens/Replays'
 import { Settings } from './screens/Settings'
+import { ChangeCar, Chat } from './screens/session/Chat'
 import { Fullscreen } from './screens/session/Fullscreen'
 import { Garage } from './screens/session/Garage'
 import { Monitor } from './screens/session/Monitor'
@@ -66,6 +68,8 @@ function EventApp() {
             <Route path="session" element={<Screen id="event/session"><SessionControls /></Screen>} />
             <Route path="results" element={<Screen id="event/results"><Results /></Screen>} />
             <Route path="settings" element={<Screen id="event/settings"><Settings /></Screen>} />
+            <Route path="chat" element={<Screen id="event/chat"><Chat /></Screen>} />
+            <Route path="car" element={<Screen id="event/car"><ChangeCar /></Screen>} />
             <Route path="settings/controls" element={<Screen id="event/controls"><Controls /></Screen>} />
           </Route>
           {/* native page MONITOR MAXIMIZED opens #/fullscreen */}
@@ -92,6 +96,7 @@ function StartApp() {
     <AppRoot>
       <HashRouter>
         <BackToPrevious />
+        <ResumeJoined />
         <Routes>
           <Route index element={<Routed id="menu" frame="bare" element={<MainMenu />} />} />
           <Route element={<AreaFrame />}>
@@ -107,6 +112,7 @@ function StartApp() {
               <Route path="lobby" element={<Routed id="online/lobby" element={<OnlinePlaceholder section="lobby" />} />} />
             </Route>
             <Route path="replays" element={<Routed id="replays" element={<Replays />} />} />
+            <Route path="notifications" element={<Routed id="notifications" element={<Notifications />} />} />
             <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
             <Route path="settings/controls" element={<Routed id="settings/controls" element={<Controls />} />} />
             <Route path="stock/:area" element={<StockRoute />} />
@@ -121,6 +127,17 @@ function StartApp() {
 }
 
 /** Back goes to the previous screen; on the main menu it does nothing (Quit is explicit). */
+/** The game reloads the start page after joining a server: go back to the joined page. */
+function ResumeJoined() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    void navigationState().then((s) => {
+      if (s.state?.settingMode === 'SETTING_MULTIPLAYER' && s.state.navigationState === 'NAV_MAIN_MENU') navigate('/online/joined', { replace: true })
+    })
+  }, [navigate])
+  return null
+}
+
 function BackToPrevious() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -143,7 +160,11 @@ function AreaFrame() {
   const area = pathname.startsWith('/stock/') ? pathname.slice(7) : (OWN_AREAS.find((a) => pathname.startsWith(`/${a}`)) ?? 'race')
   return (
     <Frame
-      top={<TopBar tabs={AREAS} current={area} onTab={(id) => navigate(OWN_AREAS.includes(id) ? `/${id}` : `/stock/${id}`, { replace: true })} />}
+      top={
+        <TopBar tabs={AREAS} current={area} onTab={(id) => navigate(OWN_AREAS.includes(id) ? `/${id}` : `/stock/${id}`, { replace: true })}>
+          <AccountBar />
+        </TopBar>
+      }
       status={profile?.nick ?? profile?.name}
     >
       <Outlet />

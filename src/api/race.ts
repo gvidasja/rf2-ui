@@ -13,6 +13,12 @@ const loadProfile = () => get<{ name?: string; nick?: string }>('/rest/profile')
 
 export const useSelection = () => useResource(SELECTION, loadSelection)
 export const useCars = () => useResource(CARS, loadCars)
+
+/** After joining a server the series, car list and selection are the server's. */
+export function refreshRaceContent() {
+  invalidate(CARS)
+  invalidate(SELECTION)
+}
 export const useTracks = () => useResource(TRACKS, loadTracks)
 export const useProfile = () => useResource('profile', loadProfile)
 

@@ -4,8 +4,9 @@ import { carImage, quitGame, startRace, useProfile, useSelection, useTrackMap } 
 import { useSessionAmounts, useSessionSettings } from '../api/sessions'
 import { liveryName } from '../race/content'
 import { carModelName, sessionSummary } from '../race/summary'
+import { OnlineStatusText } from './account/Account'
 import { switchToStockUi } from '../stockUi'
-import { Button, ConfirmButton, EmptyState, Grid, MainMenuLayout, Media, PrimaryButton, Stack, StatusIndicator, Text, TrackMap, UnderConstruction, type MenuItem } from '../ui'
+import { Button, ConfirmButton, EmptyState, Grid, MainMenuLayout, Media, PrimaryButton, Stack, Text, TrackMap, UnderConstruction, type MenuItem } from '../ui'
 
 /** One list of destinations on the left; the right side previews the focused one. */
 export function MainMenu() {
@@ -47,7 +48,7 @@ export function MainMenu() {
           </ConfirmButton>
         </Stack>
       }
-      footer={<StatusIndicator kind="offline">Offline · online status comes with P1</StatusIndicator>}
+      footer={<OnlineStatusText />}
     >
       {focused === 'race' ? (
         <Stack grow gap={6} pad={[8, 9]}>

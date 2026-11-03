@@ -32,7 +32,18 @@ export const serverKey = (s: Pick<Server, 'host' | 'port'>) => `${s.host}:${s.po
 /** Start joining; follow progress with joinState(). */
 export const joinServer = (s: Server, password = '') => get(`/rest/multiplayer/join?${query(s)}&password=${encodeURIComponent(password)}`)
 export const joinState = () => get<MultiplayerJoinState>('/rest/multiplayer/join/state')
-export const joinError = () => get<string>('/rest/multiplayer/join/error').catch(() => '')
+/** Why the join failed: the game's message, plus the content the server needs that isn't installed. */
+export async function joinError(): Promise<{ message: string; missing: string[] }> {
+  const e = await get<string | { error?: string; content?: Record<string, { name?: string; ver?: string }> }>('/rest/multiplayer/join/error').catch(() => '')
+  if (typeof e === 'string') return { message: e, missing: [] }
+  return { message: e?.error ?? '', missing: Object.values(e?.content ?? {}).map((c) => [c.name, c.ver].filter(Boolean).join(' ')) }
+}
+
+/** Whether the game is connected to a server (the start page reloads after joining). */
+export async function isJoined() {
+  const state = await joinState().catch(() => undefined)
+  return state === 'JOIN_JOINED_SERVER' || state === 'JOIN_REJOINED_SERVER'
+}
 
 export async function downloadProgress() {
   const [name, left, percent] = await Promise.all([

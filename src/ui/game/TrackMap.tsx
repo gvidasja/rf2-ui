@@ -9,6 +9,34 @@ export type MapMarker = { id: string; x: number; z: number; label: string; tone?
 const SIZE = 1000
 const PAD = 40
 
+const dist = (a: Waypoint, b: Waypoint) => Math.hypot(a.x - b.x, a.z - b.z)
+
+/**
+ * SVG path for one waypoint type. A type can hold several separate runs (pit entry and exit, for example);
+ * a jump much longer than the usual spacing starts a new run instead of drawing a line across the track.
+ * A run is closed only when its ends meet.
+ */
+function pathData(pts: Waypoint[], project: (x: number, z: number) => [number, number]) {
+  const steps = pts.slice(1).map((p, i) => dist(pts[i], p)).sort((a, b) => a - b)
+  const usual = steps[Math.floor(steps.length / 2)] ?? 0
+  const gap = Math.max(usual * 8, 1)
+  const runs: Waypoint[][] = []
+  for (const [i, p] of pts.entries()) {
+    if (i === 0 || dist(pts[i - 1], p) > gap) runs.push([])
+    runs[runs.length - 1].push(p)
+  }
+  return runs
+    .map((run) => {
+      const d = run.map((p, i) => {
+        const [x, y] = project(p.x, p.z)
+        return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`
+      })
+      const closed = run.length > 2 && dist(run[0], run[run.length - 1]) <= gap
+      return d.join('') + (closed ? 'Z' : '')
+    })
+    .join('')
+}
+
 /**
  * Track outline from the AIW waypoints (x/z plane). Type 0 is the racing line; other types (pit lane)
  * are drawn thinner. Optional markers show cars. Scales to its container; not focusable.
@@ -28,14 +56,9 @@ export function TrackMap({ points, label, height, markers }: { points?: Waypoint
     const oz = (SIZE - (maxZ - minZ) * scale) / 2
     // z grows towards the viewer in rF2; flip so north is up
     const project = (x: number, z: number): [number, number] => [ox + (x - minX) * scale, SIZE - oz - (z - minZ) * scale]
-    const byType = new Map<number, string[]>()
-    for (const p of points) {
-      const list = byType.get(p.type) ?? []
-      const [px, py] = project(p.x, p.z)
-      list.push(`${px.toFixed(1)},${py.toFixed(1)}`)
-      byType.set(p.type, list)
-    }
-    const paths = Array.from(byType, ([type, pts]) => ({ type, d: 'M' + pts.join('L') + (type === 0 ? 'Z' : '') }))
+    const byType = new Map<number, Waypoint[]>()
+    for (const p of points) byType.set(p.type, [...(byType.get(p.type) ?? []), p])
+    const paths = Array.from(byType, ([type, pts]) => ({ type, d: pathData(pts, project) }))
     return { paths, project }
   }, [points])
 

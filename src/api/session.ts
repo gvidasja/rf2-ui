@@ -1,5 +1,5 @@
 // In-session data and actions (the event page).
-import type { CameraType, ReplayCommand, SessionInfo, Setting, Setup, Vehicle, Waypoint } from '../../reference/rf2-api'
+import type { BundledState, CameraType, ChatMessage, ReplayCommand, SessionInfo, Setting, Setup, Vehicle, Waypoint } from '../../reference/rf2-api'
 import type { TransportCommand } from '../ui'
 import { get, postJson, postText } from './http'
 import { invalidate, mutate, usePolled, useResource } from './resource'
@@ -19,7 +19,13 @@ export const useStandings = () => usePolled('watch/standings', loadStandings, 50
 /** Leave the garage/monitor and drive. */
 export const drive = () => postText('/rest/garage/drive')
 /** End the weekend and go back to race setup. */
-export const leaveSession = () => postText('/rest/garage/toRaceMenu')
+export async function leaveSession() {
+  await postText('/rest/garage/toRaceMenu')
+  // offline the game switches to the start page itself; after an online session it doesn't
+  window.setTimeout(() => {
+    if (location.pathname.startsWith('/event/')) location.href = '/start/index.html'
+  }, 1500)
+}
 
 export const nextSession = () => navigate('NAV_NEXT_SESSION')
 export const finishSession = () => navigate('NAV_FINISH_SESSION')
@@ -112,3 +118,26 @@ export async function loadDefaultSetup() {
 const loadWatchTrackMap = () => get<Waypoint[]>('/rest/watch/trackmap')
 /** The current track's waypoints (same world coordinates as Vehicle.carPosition). */
 export const useWatchTrackMap = () => useResource('watch/trackmap', loadWatchTrackMap)
+
+// Mode of the session (offline, online, replay; driver or spectator) from the game's navigation state.
+export type GameMode = { online: boolean; spectator: boolean; replay: boolean; practice: boolean }
+const loadMode = async (): Promise<GameMode> => {
+  const s = (await get<BundledState>('/navigation/state')).state
+  return {
+    online: s?.settingMode === 'SETTING_MULTIPLAYER',
+    spectator: s?.user?.userState === 'SPECTATOR',
+    replay: s?.settingMode === 'SETTING_REPLAY_PLAYBACK',
+    practice: /^PRACTICE|^TESTDAY/.test(String(s?.gameSession ?? '')),
+  }
+}
+export const useGameMode = () => usePolled('navigation/mode', loadMode, 2000)
+
+// Chat (online sessions)
+export const useChat = (enabled: boolean) => usePolled(enabled ? 'chat' : null, () => get<ChatMessage[]>('/rest/chat'), 1000)
+export async function sendChat(message: string) {
+  await postText('/rest/chat', message)
+  invalidate('chat')
+}
+
+/** Online practice only: switch to another car of the server's selection (back to the garage). */
+export const changeCarOnline = (vehFile: string) => postText('/rest/race/changeCarMultiplayer', vehFile)

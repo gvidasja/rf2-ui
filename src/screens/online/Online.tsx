@@ -1,5 +1,6 @@
+import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { carImage, useSelection } from '../../api/race'
+import { carImage, refreshRaceContent, useSelection } from '../../api/race'
 import { enterServer, leaveServer } from '../../api/online'
 import { liveryName, stripVersion } from '../../race/content'
 import { switchToStockUi } from '../../stockUi'
@@ -30,6 +31,7 @@ export function Joined() {
   const navigate = useNavigate()
   // still connected: Back must not quietly leave the page (Leave is explicit)
   useAction('back', () => undefined)
+  useEffect(() => refreshRaceContent(), [])
   const { data: sel } = useSelection()
   const car = sel?.car
   return (

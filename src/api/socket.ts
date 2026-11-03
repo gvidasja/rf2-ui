@@ -87,3 +87,48 @@ export function useRequestedTopic<T>(topic: string | null) {
   const refresh = useCallback(() => setRound((r) => r + 1), [])
   return { ...state, refresh }
 }
+
+export type ReplayMetrics = {
+  currentReplayPos: number
+  replayLength: number
+  replayStartET: number
+  replayDriver: string
+  replayDriverPos: number
+  lapNumber: number
+  speed: number
+  speedUnit: string
+  gear: number
+  rpm: number
+  throttle: number
+  brakes: number
+  clutch: number
+  steering: number
+}
+
+/** Replay position and the watched car's telemetry (its own socket: /websocket/replaymetrics pushes on connect). */
+export function useReplayMetrics(enabled: boolean): ReplayMetrics | undefined {
+  const [body, setBody] = useState<ReplayMetrics>()
+  useEffect(() => {
+    if (!enabled) return
+    let socket: WebSocket | null = null
+    let alive = true
+    const open = () => {
+      socket = new WebSocket(url().replace('/websocket/ui', '/websocket/replaymetrics'))
+      socket.onmessage = (e) => {
+        try {
+          const m = JSON.parse(String(e.data)) as { type?: string; body?: ReplayMetrics }
+          if (m.type === 'replayMetrics' && m.body) setBody(m.body)
+        } catch {
+          // ignore malformed frames
+        }
+      }
+      socket.onclose = () => alive && window.setTimeout(open, 1000)
+    }
+    open()
+    return () => {
+      alive = false
+      socket?.close()
+    }
+  }, [enabled])
+  return body
+}

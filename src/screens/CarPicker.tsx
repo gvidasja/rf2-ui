@@ -8,7 +8,11 @@ import { Button, Card, Chip, EmptyState, Grid, Media, PrimaryButton, SelectableL
 const ALL = '*'
 
 /** Filters | car models grouped by series | details with liveries and "Use this car". */
-export function CarPicker() {
+/**
+ * Choose a car and livery. By default the choice becomes the selection and the picker goes back;
+ * `onUse` replaces that (in a session the car is changed differently), `back` names where Back goes.
+ */
+export function CarPicker({ onUse, back = 'Race setup', note }: { onUse?: (car: Car) => void; back?: string | false; note?: string } = {}) {
   const navigate = useNavigate()
   const { data: cars, error, reload } = useCars()
   const { data: sel } = useSelection()
@@ -44,6 +48,7 @@ export function CarPicker() {
 
   const use = (car: Car | undefined) => {
     if (!car) return
+    if (onUse) return onUse(car)
     void selectCar(car)
     navigate(-1)
   }
@@ -51,9 +56,10 @@ export function CarPicker() {
   return (
     <Stack grow gap={5} pad={[5, 7]}>
       <Stack row gap={4}>
-        <Button variant="quiet" onClick={() => navigate(-1)}>‹ Race setup</Button>
+        {back && <Button variant="quiet" onClick={() => navigate(-1)}>‹ {back}</Button>}
         <Text variant="h1">Choose car</Text>
         <Text tone="muted">{cars ? `${models.length} cars · ${cars.length} liveries` : 'Loading cars…'}</Text>
+        {note && <Text tone="muted">· {note}</Text>}
       </Stack>
       <Grid grow columns="360px minmax(0, 1fr) 640px" gap={5}>
         <Card title="Filters" scroll pad>

@@ -135,7 +135,11 @@ function ServerDetails({ server, favourite }: { server: Server; favourite: boole
       }
       if (state === 'JOIN_INVALID_PASSWORD' || state === 'JOIN_FAILURE') {
         setJoining(undefined)
-        setMessage(state === 'JOIN_INVALID_PASSWORD' ? 'Wrong password.' : (await joinError()) || 'Could not join the server.')
+        if (state === 'JOIN_INVALID_PASSWORD') setMessage('Wrong password.')
+        else {
+          const e = await joinError()
+          setMessage([e.message || 'Could not join the server.', e.missing.length ? `Missing: ${e.missing.join(', ')}` : ''].filter(Boolean).join(' '))
+        }
         return
       }
       const download = state?.startsWith('JOIN_DOWNLOADING') ? await downloadProgress() : undefined

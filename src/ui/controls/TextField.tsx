@@ -17,7 +17,10 @@ export function TextField({
   invalid,
   navId,
   autoFocus,
+  onEnter,
 }: {
+  /** Enter in the field (e.g. send a chat message) */
+  onEnter?: () => void
   value: string
   onChange: (value: string) => void
   label: string
@@ -47,6 +50,14 @@ export function TextField({
         data-nav-id={navId}
         data-autofocus={autoFocus || undefined}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={
+          onEnter &&
+          ((e) => {
+            if (e.key !== 'Enter') return
+            e.preventDefault()
+            onEnter()
+          })
+        }
       />
       {invalid && <span className={styles.message}>{invalid}</span>}
     </span>

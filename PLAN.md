@@ -65,18 +65,21 @@ coming back, full screen (the 3D view lines up with the hole at 1920×1080).
 11. Replays, notifications, online/auth status
 12. Online — Competition System: account sign-up, hub, event, schedule, history & results, leaderboards & stats, career
 
-Status (P1, in progress): checked in a browser only (`MOCK=1 bun run dev` now simulates a running session).
-- Done: live timing tab (10), settings on one page (8, menu and session), controls (9), replays (11), online server
-  browser and joining (7: lists, filters, favourites, password, download progress, then car / drive / spectate / leave).
+Status (P1, Nov 2026): done, apart from the parts left on the stock UI. Checked in game:
+- Live timing (10), settings on one page (8), controls (9: device names on bindings, live input meters, calibration
+  call), replays (11: watching, replay mode in the session page with position and telemetry, leaving).
+- Online (7): server browser, a real join (public server, AI only), the joined page, driving into the session,
+  chat tab (read only: nothing was posted to the public server), leaving the session.
+- Online status and notifications (11): signed in to Studio 397's Nakama with the game's Steam ticket (or the stock
+  UI's stored session); notifications are `notifications_global_latest` (none were live when tested).
 - Under construction (placeholders that open the stock UI): competitions (12), host a server, private lobby, content,
-  profile. Hosting spends paid minutes and lobbies act on the account, so they stay stock until decided otherwise.
-- Not yet: in-session chat and car change (online only), notifications, online status in the top bar.
-- Untested in game: controller names in bindings (`JOY<n>` is assumed to be the n-th entry of
-  `/rest/options/joysticks`), the live input meters (WebSocket topic `InputData`), calibration, assigning, watching a
-  replay and what the event page should offer in replay mode (stock: "resume driving" instead of Drive).
-- In-session car change exists only online (stock shows it in multiplayer practice); it belongs to 7.
-- Server lists arrive over the UI WebSocket (`GET_ASYNC` on `InternetServerList` etc.); `reference/capture-servers.ts`
-  records them for the mock. Joining was only tried in the mock: the real join, download and car pick are untested.
+  profile.
+- Untested: changing car online (the server was in warm-up; the tab only shows in online practice), sending a chat
+  message, assigning a control (it rebinds for real and waits for a physical input), full calibration (it would
+  overwrite the user's calibration; only "steering centre at rest" was run).
+- Gotchas found: after joining, the game reloads the start page (the app returns to the joined page); after an online
+  session `toRaceMenu` does not switch the browser back to the start page (the app does); a join that needs
+  non-downloadable content ends on the game's own error page.
 
 **P2 — completeness**
 13. Content (packages, updates, workshop)
