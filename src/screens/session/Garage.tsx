@@ -14,6 +14,9 @@ const TABS = [
 ]
 const CORNERS = ['W_FL', 'W_FR', 'W_RL', 'W_RR'] as const
 const CORNER_LABELS = ['Front left', 'Front right', 'Rear left', 'Rear right']
+// Fuel and pit stops (absent from the stock tab map, which puts fuel under powertrain) live in Strategy.
+const STRATEGY = /^VM_(FUEL_LEVEL|NUM_PITSTOPS|PITSTOP_\d+)$/
+const tabOf = (key: string) => (STRATEGY.test(key) ? 'strategy' : (GARAGE_TABS[key] ?? 'chassis'))
 const NOT_ADJUSTABLE = /^(N\/A|Non-adjustable|Fixed)$/i
 
 type Row = { kind: 'single'; key: string; label: string } | { kind: 'corners'; base: string; label: string; keys: (string | undefined)[] }
@@ -41,7 +44,7 @@ export function Garage() {
           selectedId={tab}
           onChoose={setTab}
           onFocusItem={setTab}
-          groups={[{ items: TABS.map((t) => ({ id: t.id, label: t.label, meta: counts[t.id] || undefined })) }]}
+          groups={[{ items: TABS.filter((t) => !garage || counts[t.id] > 0 || t.id === tab).map((t) => ({ id: t.id, label: t.label, meta: counts[t.id] || undefined })) }]}
         />
       </Card>
       <Card
@@ -163,6 +166,9 @@ function label(key: string, s: Setting | undefined) {
 }
 
 function baseLabel(key: string, s: Setting | undefined) {
+  if (key === 'VM_NUM_PITSTOPS') return 'Planned pit stops'
+  const stop = key.match(/^VM_PITSTOP_(\d+)$/)
+  if (stop) return `Fuel at stop ${stop[1]}`
   const caption = s?.caption?.trim()
   if (caption && GARAGE_CAPTIONS[caption]) return GARAGE_CAPTIONS[caption]
   if (GARAGE_LABELS[key]) return GARAGE_LABELS[key]
@@ -186,7 +192,7 @@ function buildRows(garage: Record<string, Setting> | undefined, meta: GarageMeta
   const rows: Row[] = []
   const seen = new Set<string>()
   for (const key of Object.keys(garage).sort()) {
-    if ((GARAGE_TABS[key] ?? 'chassis') !== tab || seen.has(key)) continue
+    if (tabOf(key) !== tab || seen.has(key)) continue
     const corner = key.match(/^(WM_\w+?)-(W_FL|W_FR|W_RL|W_RR)$/)
     if (corner) {
       const base = corner[1]

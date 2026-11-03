@@ -41,7 +41,7 @@
   --c-action: #ff5a1f;
   --c-action-text: #ff8a5c;
   --c-action-bg: #3a1e12;
-  --c-focus: #ffd23f;
+  --c-focus: rgba(255, 255, 255, 0.45);
   --c-good: #6fd9a4;
   --c-good-bg: #173226;
   --c-warn: #f5c451;
@@ -75,8 +75,8 @@
   --radius-l: 8px;
   --border: 0;
   --hairline: 1px solid var(--c-hairline);
-  --focus-ring: 3px solid var(--c-focus);
-  --focus-offset: 2px;
+  --focus-ring: 2px solid var(--c-focus);
+  --focus-offset: 1px;
 
   /* space */
   --sp-1: 4px;

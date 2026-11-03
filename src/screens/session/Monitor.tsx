@@ -108,16 +108,17 @@ export function StandingsTable({ rows, race, fastest, onRow, finished }: { rows:
       isYou={(v) => v.player}
       onRow={onRow}
       columns={[
-        { key: 'pos', header: 'Pos', render: (v) => v.position, width: '64px' },
+        { key: 'pos', header: 'Pos', render: (v) => v.position, width: '48px' },
         { key: 'driver', header: 'Driver', render: (v) => `${v.driverName}${v.carNumber ? ` #${v.carNumber}` : ''}` },
-        { key: 'car', header: 'Car', render: (v) => v.carClass ?? '', muted: true },
-        { key: 'gap', header: race ? 'Gap' : 'To fastest', render: (v) => gap(v, race, fastest), numeric: true, width: '120px' },
-        { key: 'last', header: 'Last', render: (v) => lapTime(v.lastLapTime), numeric: true, width: '110px' },
-        { key: 'best', header: 'Best', render: (v) => lapTime(v.bestLapTime), numeric: true, width: '110px' },
-        { key: 'laps', header: 'Laps', render: (v) => v.lapsCompleted, numeric: true, width: '72px' },
+        { key: 'car', header: 'Car', render: (v) => stripVersion(v.vehicleName ?? '').replace(/\s*#\S+$/, ''), muted: true },
+        { key: 'class', header: 'Class', render: (v) => v.carClass ?? '', muted: true, width: '15%' },
+        { key: 'gap', header: race ? 'Gap' : 'To fastest', render: (v) => gap(v, race, fastest), numeric: true, width: '104px' },
+        { key: 'last', header: 'Last', render: (v) => lapTime(v.lastLapTime), numeric: true, width: '96px' },
+        { key: 'best', header: 'Best', render: (v) => lapTime(v.bestLapTime), numeric: true, width: '96px' },
+        { key: 'laps', header: 'Laps', render: (v) => v.lapsCompleted, numeric: true, width: '56px' },
         finished
           ? { key: 'pits', header: 'Stops', render: (v) => v.pitstops, numeric: true, width: '72px' }
-          : { key: 'where', header: 'Where', render: where, muted: true, width: '96px' },
+          : { key: 'where', header: 'Where', render: where, muted: true, width: '88px' },
       ]}
     />
   )

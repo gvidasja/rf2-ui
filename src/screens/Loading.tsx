@@ -44,11 +44,12 @@ export function Loading() {
         <TrackMap points={track?.trackmap ?? []} label="Track map" height={420} />
         <Stats
           columns={2}
+          // the race endpoints often don't answer while the game loads: show only what is known
           items={[
-            { label: 'Your car', value: sel?.car ? `${carModelName(sel)} · ${liveryName(sel.car)}` : '—' },
-            { label: 'Length', value: trackLength(sel?.track) || '—' },
-            { label: 'Weekend', value: sessionSummary(settings, amounts) || '—' },
-          ]}
+            { label: 'Your car', value: sel?.car ? `${carModelName(sel)} · ${liveryName(sel.car)}` : '' },
+            { label: 'Length', value: trackLength(sel?.track) || (typeof track?.length === 'string' ? track.length : '') },
+            { label: 'Weekend', value: sessionSummary(settings, amounts) || '' },
+          ].filter((i) => i.value)}
         />
       </Stack>
     </Grid>
