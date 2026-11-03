@@ -20,6 +20,11 @@
 .empty {
   color: var(--c-disabled);
 }
+.active {
+  border-color: var(--c-info);
+  background: var(--c-info-bg);
+  color: var(--c-text);
+}
 .listening {
   border-color: var(--c-warn);
   color: var(--c-warn);

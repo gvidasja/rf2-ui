@@ -16,10 +16,11 @@ import {
   type InputData,
 } from '../api/controls'
 import { conflicts, formatBinding } from '../settings/bindings'
+import { bindingIs, usePressedInputs } from '../settings/pressed'
 import { CONTROL_GROUPS } from '../settings/controlLabels'
 import { AXES, CONTROL_SECTIONS, type AxisDef } from '../settings/controls'
 import { OptionRow } from '../settings/OptionControl'
-import { BindingButton, Button, Card, ConfirmButton, Grid, Meter, Select, SettingRow, Stack, suspendInput, Text, TextField } from '../ui'
+import { BindingButton, Button, Pinned, Card, ConfirmButton, Grid, Meter, Select, SettingRow, Stack, suspendInput, Text, TextField } from '../ui'
 
 // share of a raw value within the device's range (as the stock calibration page does)
 const share = (v: number, min: number, max: number) => (max === min ? 0 : (v - min) / (max - min))
@@ -157,6 +158,15 @@ function AssignmentsCard() {
     return others?.length ? `also ${others.map((k) => labels.get(k) ?? k).join(', ')}` : undefined
   }
 
+  // what is pressed right now, and which actions it is bound to
+  const pressed = usePressedInputs(joysticks, !listening)
+  const boundTo = (input: string) => CONTROL_GROUPS.flatMap((g) => g.items).filter((i) => bindingIs(assigned?.[i.key as ConfigurableControl], input))
+  const active = new Set(pressed.flatMap((p) => boundTo(p).map((i) => i.key)))
+  const firstActive = [...active][0]
+  useEffect(() => {
+    if (firstActive) document.querySelector(`[data-nav-id="${firstActive}"]`)?.scrollIntoView({ block: 'center' })
+  }, [firstActive])
+
   const q = query.trim().toLowerCase()
   const groups = CONTROL_GROUPS.map((g) => ({ ...g, items: g.items.filter((i) => !q || `${i.label} ${g.title} ${g.page}`.toLowerCase().includes(q)) })).filter((g) => g.items.length)
 
@@ -177,6 +187,24 @@ function AssignmentsCard() {
       scroll
       grow
     >
+      <Pinned>
+        {pressed.length ? (
+          <Stack gap={1}>
+            {pressed.map((p) => {
+              const actions = boundTo(p)
+              return (
+                <Stack key={p} row gap={2}>
+                  <Text weight="bold">{formatBinding(p, joysticks)}</Text>
+                  <Text tone="muted">→</Text>
+                  {actions.length ? <Text>{actions.map((x) => x.label).join(', ')}</Text> : <Text tone="muted">not assigned</Text>}
+                </Stack>
+              )
+            })}
+          </Stack>
+        ) : (
+          <Text tone="muted">{listening ? 'The game is listening for the new input.' : 'Press a key, button or pedal to see what it does.'}</Text>
+        )}
+      </Pinned>
       {groups.map((g, i) => (
         <Stack key={g.id} pad={[3, 4]}>
           <Text variant="label">{groups[i - 1]?.page === g.page ? g.title : `${g.page} · ${g.title}`}</Text>
@@ -186,6 +214,7 @@ function AssignmentsCard() {
                 binding={formatBinding(assigned?.[item.key as ConfigurableControl], joysticks)}
                 listening={listening?.key === item.key && listening.text}
                 conflict={conflictOf(item.key)}
+                active={active.has(item.key)}
                 onPress={() => assign(item.key as ConfigurableControl)}
                 label={item.label}
                 navId={item.key}

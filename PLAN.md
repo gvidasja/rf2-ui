@@ -91,6 +91,13 @@ Status (P1, Nov 2026): done, apart from the parts left on the stock UI. Checked 
 
 ## Later / on hold
 
+- **Tech debt: "pressed input" in Controls is guessed in the browser** (`src/settings/pressed.ts`). The game has
+  no API for the input being pressed now (its natives only give the four calibrated axes, and assignment mode
+  rebinds for real). The page reads the browser's gamepads and keys and translates them to the game's names:
+  devices are matched to `/rest/options/joysticks` by name and order (two devices with the same name, like the
+  FANATEC wheel, can come out swapped), buttons are assumed to be DirectInput order + 1, axes X Y Z RX RY RZ.
+  Proper fix: a small native DLL loaded by our Java bundle that reads DirectInput in shared mode and publishes
+  presses on a WebSocket topic (exact device / button numbers, same as the game). Needs a C++ toolchain.
 - **External launcher** (an app outside the game that starts a race already configured). Findings in
   `reference/EXTERNAL_LAUNCH.md`:
   - Session settings are the `player.JSON` entries. Editing the file while the game is closed works; this was tested.

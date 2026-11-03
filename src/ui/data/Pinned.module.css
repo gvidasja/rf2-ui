@@ -1,0 +1,8 @@
+.pinned {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--c-surface-head);
+  border-bottom: var(--hairline);
+}

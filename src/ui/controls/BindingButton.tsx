@@ -6,6 +6,7 @@ export function BindingButton({
   binding,
   listening,
   conflict,
+  active,
   onPress,
   label,
   navId,
@@ -15,6 +16,8 @@ export function BindingButton({
   listening?: string | false
   /** why the binding is a problem, e.g. "also Wipers" */
   conflict?: string
+  /** this input is being pressed right now */
+  active?: boolean
   onPress: () => void
   label: string
   navId?: string
@@ -23,7 +26,7 @@ export function BindingButton({
   return (
     <button
       type="button"
-      className={cx(styles.binding, empty && styles.empty, listening && styles.listening, !listening && conflict && styles.conflict)}
+      className={cx(styles.binding, empty && styles.empty, active && styles.active, listening && styles.listening, !listening && conflict && styles.conflict)}
       aria-label={`${label}: ${listening || binding || 'not set'}${conflict ? `, ${conflict}` : ''}`}
       data-nav-id={navId}
       onClick={listening ? undefined : onPress}
