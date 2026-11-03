@@ -6,8 +6,8 @@ import type { Option } from './Segmented'
 import styles from './Value.module.css'
 
 /**
- * More than ~5 options. ← → pick the previous / next option without opening; Enter opens the list in
- * place (↑ ↓, type-ahead, Enter chooses, Esc closes).
+ * A dropdown with − / + beside it to click through the values (they stop at the ends). ← → do the same
+ * from the keyboard without opening; Enter opens the list in place (↑ ↓, type-ahead, Enter chooses, Esc closes).
  */
 export function Select<T extends string | number>({
   options,
@@ -60,14 +60,21 @@ export function Select<T extends string | number>({
     close()
   }
 
+  // the next enabled option in a direction, or undefined at the end
+  const neighbour = (dir: number) => {
+    for (let i = index + dir; i >= 0 && i < options.length; i += dir) if (!options[i].disabled) return options[i]
+    return undefined
+  }
+  const step = (dir: number) => {
+    const o = neighbour(dir)
+    if (o) onChange(o.value)
+  }
+
   const onButtonKey = (e: KeyboardEvent) => {
     if (disabled || open) return
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault()
-      const dir = e.key === 'ArrowLeft' ? -1 : 1
-      for (let i = index + dir; i >= 0 && i < options.length; i += dir) {
-        if (!options[i].disabled) return onChange(options[i].value)
-      }
+      step(e.key === 'ArrowLeft' ? -1 : 1)
     }
   }
 
@@ -88,7 +95,11 @@ export function Select<T extends string | number>({
 
   const current = index >= 0 ? options[index].label : placeholder
   return (
-    <span className={styles.select}>
+    <span className={cx(styles.select, disabled && styles.disabled)}>
+      {/* mouse only: ← → do this from the keyboard */}
+      <button type="button" className={styles.stepBtn} tabIndex={-1} aria-label={`Previous ${label}`} disabled={disabled || !neighbour(-1)} onClick={() => step(-1)}>
+        −
+      </button>
       <button
         ref={button}
         type="button"
@@ -102,6 +113,9 @@ export function Select<T extends string | number>({
         onKeyDown={onButtonKey}
       >
         {current}
+      </button>
+      <button type="button" className={styles.stepBtn} tabIndex={-1} aria-label={`Next ${label}`} disabled={disabled || !neighbour(1)} onClick={() => step(1)}>
+        +
       </button>
       {open && (
         <div

@@ -133,7 +133,10 @@
 .select {
   position: relative;
   display: inline-flex;
+  align-items: center;
   flex: none;
+  border-radius: var(--radius-m);
+  background: var(--c-control);
 }
 .selectBtn {
   position: relative;
@@ -144,7 +147,7 @@
   padding: 0 36px 0 var(--sp-3);
   border: 0;
   border-radius: var(--radius-m);
-  background: var(--c-control);
+  background: transparent;
   color: var(--c-text);
   font-size: var(--fs-secondary);
   font-weight: var(--fw-medium);
@@ -164,7 +167,6 @@
   transform: rotate(45deg);
 }
 .selectBtn:disabled {
-  opacity: 0.45;
   cursor: default;
 }
 .listbox {

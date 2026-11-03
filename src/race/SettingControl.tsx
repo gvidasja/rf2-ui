@@ -1,9 +1,9 @@
 import { setSetting, settingValue, useSessionSettings } from '../api/sessions'
-import { Segmented, Select, SettingRow, Stepper, Toggle } from '../ui'
+import { Select, SettingRow, Stepper, Toggle } from '../ui'
 import { SETTINGS, type SettingDef, type SettingKey } from './settings'
 
-/** The control for one session setting, chosen from its definition; `as` overrides enum rendering. */
-export function SettingControl({ k, disabled, as }: { k: SettingKey; disabled?: boolean; as?: 'segmented' | 'select' }) {
+/** The control for one session setting, chosen from its definition. Choices are dropdowns with − / +. */
+export function SettingControl({ k, disabled }: { k: SettingKey; disabled?: boolean }) {
   const { data } = useSessionSettings()
   const def: SettingDef = SETTINGS[k]
   const value = settingValue(data, k)
@@ -26,20 +26,16 @@ export function SettingControl({ k, disabled, as }: { k: SettingKey; disabled?: 
     case 'bool':
       return <Toggle on={!!value} onChange={(on) => onChange(on ? 1 : 0)} label={def.label} disabled={disabled} navId={k} />
     case 'enum':
-      return (as ?? (def.options.length <= 5 ? 'segmented' : 'select')) === 'segmented' ? (
-        <Segmented options={def.options} value={value ?? undefined} onChange={onChange} label={def.label} disabled={disabled} navId={k} />
-      ) : (
-        <Select options={def.options} value={value ?? undefined} onChange={onChange} label={def.label} disabled={disabled} navId={k} />
-      )
+      return <Select options={def.options} value={value ?? undefined} onChange={onChange} label={def.label} disabled={disabled} navId={k} />
   }
 }
 
 /** A setting row: label, help and note from the definition, plus its control. */
-export function SettingLine({ k, note, disabledReason, label, as }: { k: SettingKey; note?: string; disabledReason?: string; label?: string; as?: 'segmented' | 'select' }) {
+export function SettingLine({ k, note, disabledReason, label }: { k: SettingKey; note?: string; disabledReason?: string; label?: string }) {
   const def: SettingDef = SETTINGS[k]
   return (
     <SettingRow label={label ?? def.label} note={note} help={def.help} disabledReason={disabledReason}>
-      <SettingControl k={k} disabled={!!disabledReason} as={as} />
+      <SettingControl k={k} disabled={!!disabledReason} />
     </SettingRow>
   )
 }

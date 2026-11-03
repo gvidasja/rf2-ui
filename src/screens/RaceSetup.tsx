@@ -108,7 +108,7 @@ export function RaceSetup() {
             <SettingLine k="SESSSET_Tire_Wear" />
             <SettingLine k="SESSSET_Mech_Failures" />
             <SettingLine k="SESSSET_Damage_Multi" />
-            <SettingLine k="SESSSET_parc_ferme" as="select" />
+            <SettingLine k="SESSSET_parc_ferme" />
           </Card>
         </Stack>
       </Grid>
