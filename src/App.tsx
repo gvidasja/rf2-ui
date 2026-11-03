@@ -6,6 +6,7 @@ import { Loading } from './screens/Loading'
 import { MainMenu, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
 import { RaceSetup } from './screens/RaceSetup'
+import { Settings } from './screens/Settings'
 import { Fullscreen } from './screens/session/Fullscreen'
 import { Garage } from './screens/session/Garage'
 import { Monitor } from './screens/session/Monitor'
@@ -60,6 +61,7 @@ function EventApp() {
             <Route path="garage" element={<Screen id="event/garage"><Garage /></Screen>} />
             <Route path="session" element={<Screen id="event/session"><SessionControls /></Screen>} />
             <Route path="results" element={<Screen id="event/results"><Results /></Screen>} />
+            <Route path="settings" element={<Screen id="event/settings"><Settings /></Screen>} />
           </Route>
           {/* native page MONITOR MAXIMIZED opens #/fullscreen */}
           <Route path="fullscreen" element={<Frame hole="full" hints={['select']}><Screen id="event/fullscreen"><Fullscreen /></Screen></Frame>} />
@@ -92,6 +94,7 @@ function StartApp() {
             <Route path="race/car" element={<Routed id="race/car" element={<CarPicker />} />} />
             <Route path="race/track" element={<Routed id="race/track" element={<TrackPicker />} />} />
             <Route path="race/opponents" element={<Routed id="race/opponents" element={<Opponents />} />} />
+            <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
             <Route path="stock/:area" element={<StockRoute />} />
           </Route>
           <Route path="loading" element={<Routed id="loading" frame="bare" element={<Loading />} />} />
@@ -116,14 +119,17 @@ function Routed({ id, element, frame }: { id: string; element: React.ReactNode; 
   return frame === 'bare' ? <Frame hints={id === 'menu' ? ['move', 'select'] : []}>{screen}</Frame> : screen
 }
 
+// areas with new screens; the rest still open the stock UI
+const OWN_AREAS = ['race', 'settings']
+
 function AreaFrame() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: profile } = useProfile()
-  const area = pathname.startsWith('/stock/') ? pathname.slice(7) : 'race'
+  const area = pathname.startsWith('/stock/') ? pathname.slice(7) : pathname.startsWith('/settings') ? 'settings' : 'race'
   return (
     <Frame
-      top={<TopBar tabs={AREAS} current={area} onTab={(id) => navigate(id === 'race' ? '/race' : `/stock/${id}`, { replace: true })} />}
+      top={<TopBar tabs={AREAS} current={area} onTab={(id) => navigate(OWN_AREAS.includes(id) ? `/${id}` : `/stock/${id}`, { replace: true })} />}
       status={profile?.nick ?? profile?.name}
     >
       <Outlet />

@@ -66,11 +66,21 @@ export function mockGame(): Plugin {
           s.stringValue = String(value)
           return json(s)
         }
-        if (p === '/rest/options/float') {
+        if (p === '/rest/options/float' || p === '/rest/options/long') {
           const { optionEntry, value } = JSON.parse(body)
           const key = { GAMEOPT_ai_aggression: 'SESSSET_AI_Aggression', GAMEOPT_ai_limiter: 'SESSSET_AI_Limiter' }[optionEntry as string]
           if (key) sessions[key].currentValue = value
-          return json({ currentValue: value })
+          // the same option object in every group sample it appears in
+          let option: { currentValue: unknown; stringValue: string } | undefined
+          for (const g of ['difficulty', 'display', 'sound', 'network', 'replay', 'summary']) {
+            const o = (sample(`rest_options_${g}`) as Record<string, typeof option> | undefined)?.[optionEntry]
+            if (!o) continue
+            o.currentValue = value
+            // the game's own text is unknown here: On/Off for switches, the number otherwise
+            if (o.stringValue) o.stringValue = /^(On|Off)$/.test(o.stringValue) ? (value ? 'On' : 'Off') : `Level ${value}`
+            option = o
+          }
+          return json(option ?? { currentValue: value })
         }
         if ((m = p.match(/^\/rest\/sessions\/(practice|qualify|warmup|race)\/sessions$/))) {
           const amounts = sample('rest_sessions_amount') as Record<string, number>

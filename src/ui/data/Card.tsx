@@ -14,7 +14,10 @@ export function Card({
   grow,
   scroll,
   pad,
+  anchor,
 }: {
+  /** element id, for in-page links that scroll to this card */
+  anchor?: string
   title?: ReactNode
   action?: ReactNode
   children?: ReactNode
@@ -24,7 +27,7 @@ export function Card({
 }) {
   const id = useId()
   return (
-    <section className={cx(styles.card, grow && styles.cardGrow)} aria-labelledby={title ? id : undefined}>
+    <section id={anchor} className={cx(styles.card, grow && styles.cardGrow)} aria-labelledby={title ? id : undefined}>
       {(title || action) && (
         <div className={styles.cardHead}>
           {title && (

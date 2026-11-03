@@ -31,6 +31,10 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+/* content scrolls instead of being squeezed */
+.scroll > * {
+  flex-shrink: 0;
+}
 .fill {
   height: 100%;
 }

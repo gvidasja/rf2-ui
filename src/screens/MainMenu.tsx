@@ -23,7 +23,7 @@ export function MainMenu() {
     stock('competitions', 'Competitions'),
     stock('replays', 'Replays'),
     stock('content', 'Content'),
-    stock('settings', 'Settings'),
+    { id: 'settings', label: 'Settings', onOpen: () => navigate('/settings') },
     stock('profile', 'Profile', profile?.nick ?? profile?.name),
   ]
 

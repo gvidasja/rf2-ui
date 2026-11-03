@@ -10,6 +10,7 @@ const SESSION_TABS: Tab[] = [
   { id: '/garage', label: 'Garage' },
   { id: '/session', label: 'Session' },
   { id: '/results', label: 'Results' },
+  { id: '/settings', label: 'Settings' },
 ]
 
 /** Session bar + tabs around every in-session screen; the monitor tab leaves the 3D view visible. */
