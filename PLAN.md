@@ -49,13 +49,13 @@ Top level (persistent top bar): **Race** (single player) · **Online** · **Repl
 5. Session — garage / setup
 6. Session — controls (next session, restart, add/remove AI) and results
 
-Status (P0, Nov 2026): built and installed. All screens were checked in a browser against saved API samples
-(`MOCK=1 bun run dev`); only the main menu was seen in game, in the earlier menu-only build, so the session pages are untested there.
+Status (P0, Nov 2026): built, installed and checked in game: menu, loading, the session tabs, garage changes, driving and
+coming back, full screen (the 3D view lines up with the hole at 1920×1080).
 - Main menu, race setup, car/track pickers, opponent field, loading (`/loading` page).
 - Session (`/event` page): monitor (camera, focused car, replay transport, your car, running order, around the native 3D hole),
   garage (all setup categories, per-corner grid, saved setups), session controls (next/finish/restart, add/remove AI), results,
   full-screen monitor bar.
-- Not yet: weather forecast editor, live timing tab, in-session car change, settings (P1).
+- Not yet: weather forecast editor.
 
 **P1 — complete daily use**
 7. Online — hosted servers: browser + join (password, car, drive/spectate), host a server (paid hosting minutes), private lobby (code, members, ready), in-session chat and car change
@@ -64,6 +64,15 @@ Status (P0, Nov 2026): built and installed. All screens were checked in a browse
 10. Session — live timing (track map + full timing), full-screen monitor, replay controls
 11. Replays, notifications, online/auth status
 12. Online — Competition System: account sign-up, hub, event, schedule, history & results, leaderboards & stats, career
+
+Status (P1, in progress): checked in a browser only (`MOCK=1 bun run dev` now simulates a running session).
+- Done: live timing tab (10), settings on one page (8, menu and session), controls (9), replays (11).
+- Untested in game: controller names in bindings (`JOY<n>` is assumed to be the n-th entry of
+  `/rest/options/joysticks`), the live input meters (WebSocket topic `InputData`), calibration, assigning, watching a
+  replay and what the event page should offer in replay mode (stock: "resume driving" instead of Drive).
+- In-session car change exists only online (stock shows it in multiplayer practice); it belongs to 7.
+- Online (7, 12) needs the game online: server lists arrive over the UI WebSocket (topics `InternetServerList`,
+  `FavoritesServerList`, …), lobbies use Nakama, hosting spends paid minutes.
 
 **P2 — completeness**
 13. Content (packages, updates, workshop)
