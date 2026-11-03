@@ -13,8 +13,10 @@ is the "rFactor 2 — new UI" Claude design.
   progress inline and never block the rest of the page.
 - **Flat and legible.** Dark, flat surfaces; one accent colour (race orange) for primary actions only; text contrast ≥ 4.5:1;
   16 px minimum at 1080p; targets ≥ 44 px.
-- **Every input method.** Mouse, keyboard, wheel buttons / gamepad: logical focus order, always-visible focus ring,
-  arrow keys step values, Enter confirms, Esc goes back one level.
+- **Keyboard and controller first.** Every screen fully usable with keyboard, gamepad or wheel buttons
+  (spec: "Keyboard & controller" board in the design): one always-visible focus ring, spatial arrow navigation,
+  ← → change values directly, Back restores focus, shared hint bar with device-specific glyphs. Replaces the
+  game's gamepad-mouse emulation. Built into the shared components from P0, not added later.
 - **Honest controls.** Show values with units; type a value or step it (we have absolute setters); dependent settings
   stay visible but disabled with the reason ("Race laps — not used: finish by time").
 - **Keep the native shell.** In-session pages keep the native 3D monitor at 30,255 793×465 (`UI.OSC`); full screen
