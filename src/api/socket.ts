@@ -74,18 +74,21 @@ export function useTopic<T>(topic: string | null): T | undefined {
 
 /** Request a topic once (GET_ASYNC): the latest body, whether the game is done, and a way to ask again. */
 export function useRequestedTopic<T>(topic: string | null) {
-  const [state, setState] = useState<{ body?: T; done: boolean }>({ done: false })
+  // keyed by topic: switching topic shows nothing (not the previous topic's data) until the game answers;
+  // a refresh of the same topic keeps the old data on screen meanwhile
+  const [state, setState] = useState<{ topic: string | null; body?: T; done: boolean }>({ topic, done: false })
   const [round, setRound] = useState(0)
   useEffect(() => {
     if (!topic) return
-    setState((s) => ({ body: s.body, done: false }))
+    setState((s) => ({ topic, body: s.topic === topic ? s.body : undefined, done: false }))
     return listen(topic, 'async', (m) => {
-      if (m.messageType === 'UPDATE') setState((s) => ({ ...s, body: m.body as T }))
-      else if (m.messageType === 'END_OF_UPDATES') setState((s) => ({ ...s, done: true }))
+      if (m.messageType === 'UPDATE') setState((s) => ({ ...s, topic, body: m.body as T }))
+      else if (m.messageType === 'END_OF_UPDATES') setState((s) => ({ ...s, topic, done: true }))
     })
   }, [topic, round])
   const refresh = useCallback(() => setRound((r) => r + 1), [])
-  return { ...state, refresh }
+  const current = state.topic === topic
+  return { body: current ? state.body : undefined, done: current && state.done, refresh }
 }
 
 export type ReplayMetrics = {

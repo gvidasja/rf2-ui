@@ -27,6 +27,8 @@ const HOLD_RATE = 60
  * A number with − / +. One focus stop: ← → step (Shift ×10), digits start typing a value, Enter commits,
  * Esc cancels. The buttons are for the mouse (press and hold repeats).
  */
+const RIGHT_CLICK_STEPS = 5
+
 export function Stepper({ value, onChange, min = -Infinity, max = Infinity, step = 1, format = String, parse, label, disabled, was, navId, autoFocus }: StepperProps) {
   const [draft, setDraft] = useState<string | null>(null)
   const latest = useRef(value)
@@ -77,13 +79,15 @@ export function Stepper({ value, onChange, min = -Infinity, max = Infinity, step
     clearInterval(hold.current.interval)
   }
   useEffect(() => stopHold, [])
+  // left button: one step; right button: five steps (as in the stock UI), stopping at the limit. Held: repeats.
   const startHold = (dir: number) => (e: PointerEvent) => {
-    if (disabled || e.button !== 0) return
+    if (disabled || (e.button !== 0 && e.button !== 2)) return
     e.preventDefault()
-    stepBy(dir)
+    const n = dir * (e.button === 2 ? RIGHT_CLICK_STEPS : 1)
+    stepBy(n)
     stopHold()
     hold.current.timeout = window.setTimeout(() => {
-      hold.current.interval = window.setInterval(() => stepBy(dir), HOLD_RATE)
+      hold.current.interval = window.setInterval(() => stepBy(n), HOLD_RATE)
     }, HOLD_DELAY)
   }
 
@@ -99,6 +103,7 @@ export function Stepper({ value, onChange, min = -Infinity, max = Infinity, step
         onPointerDown={startHold(-1)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
+        onContextMenu={(e) => e.preventDefault()}
       >
         −
       </button>
@@ -135,6 +140,7 @@ export function Stepper({ value, onChange, min = -Infinity, max = Infinity, step
         onPointerDown={startHold(1)}
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
+        onContextMenu={(e) => e.preventDefault()}
       >
         +
       </button>

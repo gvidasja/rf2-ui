@@ -33,7 +33,12 @@ export function mockGame(): Plugin {
     apply: 'serve',
     configureServer(server) {
       shared.rf2uiMockSample = sample
-      shared.rf2uiMockSocket ??= serveMockSocket(SOCKET_PORT, (n) => shared.rf2uiMockSample!(n))
+      try {
+        shared.rf2uiMockSocket ??= serveMockSocket(SOCKET_PORT, (n) => shared.rf2uiMockSample!(n))
+      } catch {
+        // the game holds the port: no mock socket (server lists and live input stay empty)
+        console.warn(`[mock] port ${SOCKET_PORT} is in use (is the game running?); the UI WebSocket is not mocked`)
+      }
       server.middlewares.use(async (req, res, next) => {
         const url = new URL(req.url ?? '/', 'http://x')
         if (!/^\/(rest|navigation)\//.test(url.pathname)) return next()
