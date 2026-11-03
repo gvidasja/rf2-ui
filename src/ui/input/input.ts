@@ -219,14 +219,17 @@ function onKeyDown(e: KeyboardEvent) {
 
 // ---- gamepad ----------------------------------------------------------------------------------
 
-type PadState = { pressed: boolean; since: number; last: number }
+/** `armed`: seen released at least once; an input held when first seen (an axis resting at full) never fires. */
+type PadState = { pressed: boolean; since: number; last: number; armed: boolean }
 const pad = new Map<number, PadState>()
 
 function pollGamepads(now: number) {
   const pads = navigator.getGamepads ? Array.from(navigator.getGamepads()) : []
   const merged = new Map<number, boolean>()
   for (const gp of pads) {
-    if (!gp) continue
+    // Only controllers with the standard (Xbox-style) layout: wheels, pedals and vJoy report their own
+    // layouts, where button and axis numbers mean something else (a pedal at rest reads as "stick down").
+    if (!gp || gp.mapping !== 'standard') continue
     gp.buttons.forEach((b, i) => merged.set(i, (merged.get(i) ?? false) || b.pressed))
     const [x = 0, y = 0] = gp.axes
     if (y < -STICK) merged.set(12, true)
@@ -235,7 +238,13 @@ function pollGamepads(now: number) {
     if (x > STICK) merged.set(15, true)
   }
   merged.forEach((pressed, i) => {
-    const s = pad.get(i) ?? { pressed: false, since: 0, last: 0 }
+    const s = pad.get(i) ?? { pressed, since: now, last: now, armed: !pressed }
+    if (!pressed) s.armed = true
+    if (!s.armed) {
+      s.pressed = pressed
+      pad.set(i, s)
+      return
+    }
     if (pressed && !s.pressed) {
       s.since = s.last = now
       if (!suspended) press(i)
