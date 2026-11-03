@@ -43,7 +43,7 @@ function axisView(axis: AxisDef, data: InputData[] | undefined, limits: AxisLimi
 /** Inputs (live, with calibration), wheel and force feedback, and every assignable control. */
 export function Controls() {
   return (
-    <Grid grow columns="820px minmax(0, 1fr)" gap={5} pad={[5, 7]}>
+    <Grid grow columns="minmax(0, 1.1fr) minmax(0, 1fr)" gap={5}>
       <Stack gap={5} scroll>
         <ProfileCard />
         <InputsCard />

@@ -12,7 +12,7 @@ import { RaceSetup } from './screens/RaceSetup'
 import { Joined, OnlineFrame, OnlinePlaceholder } from './screens/online/Online'
 import { Servers } from './screens/online/Servers'
 import { Replays } from './screens/Replays'
-import { Settings } from './screens/Settings'
+import { SettingsIndex, SettingsLayout, SettingsSection } from './screens/Settings'
 import { ChangeCar, Chat } from './screens/session/Chat'
 import { Fullscreen } from './screens/session/Fullscreen'
 import { Garage } from './screens/session/Garage'
@@ -61,10 +61,13 @@ function EventApp() {
             <Route path="garage" element={<Screen id="event/garage"><Garage /></Screen>} />
             <Route path="session" element={<Screen id="event/session"><SessionControls /></Screen>} />
             <Route path="results" element={<Screen id="event/results"><Results /></Screen>} />
-            <Route path="settings" element={<Screen id="event/settings"><Settings /></Screen>} />
+            <Route path="settings" element={<SettingsLayout />}>
+              <Route index element={<SettingsIndex />} />
+              <Route path="controls" element={<Screen id="event/controls"><Controls /></Screen>} />
+              <Route path=":section" element={<Screen id="event/settings"><SettingsSection /></Screen>} />
+            </Route>
             <Route path="chat" element={<Screen id="event/chat"><Chat /></Screen>} />
             <Route path="car" element={<Screen id="event/car"><ChangeCar /></Screen>} />
-            <Route path="settings/controls" element={<Screen id="event/controls"><Controls /></Screen>} />
           </Route>
           {/* native page MONITOR MAXIMIZED opens #/fullscreen */}
           <Route path="fullscreen" element={<Frame hole="full" hints={['select']}><Screen id="event/fullscreen"><Fullscreen /></Screen></Frame>} />
@@ -107,8 +110,11 @@ function StartApp() {
             </Route>
             <Route path="replays" element={<Routed id="replays" element={<Replays />} />} />
             <Route path="notifications" element={<Routed id="notifications" element={<Notifications />} />} />
-            <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
-            <Route path="settings/controls" element={<Routed id="settings/controls" element={<Controls />} />} />
+            <Route path="settings" element={<SettingsLayout />}>
+              <Route index element={<SettingsIndex />} />
+              <Route path="controls" element={<Routed id="settings/controls" element={<Controls />} />} />
+              <Route path=":section" element={<Routed id="settings/section" element={<SettingsSection />} />} />
+            </Route>
             <Route path="stock/:area" element={<StockRoute />} />
           </Route>
           <Route path="loading" element={<Routed id="loading" frame="bare" element={<Loading />} />} />
