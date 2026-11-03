@@ -40,7 +40,7 @@ Top level (persistent top bar): **Race** (single player) · **Online** · **Repl
 ## Priorities
 
 **P0 — offline race loop** (replaces the slow path people use every day)
-1. Race setup (car, track, sessions, opponents, conditions, rules) + Start
+1. Main menu (one list + preview of the focused item) and Race setup (car, track, sessions, opponents, conditions, rules) + Start
 2. Car picker, track picker (inline panels with search + filters)
 3. Loading
 4. Session monitor (3D view + timing + session bar + Drive)
@@ -48,19 +48,19 @@ Top level (persistent top bar): **Race** (single player) · **Online** · **Repl
 6. Session — controls (next session, restart, add/remove AI) and results
 
 **P1 — complete daily use**
-7. Online server browser + join (password, car, drive/spectate) + host
+7. Online — hosted servers: browser + join (password, car, drive/spectate), host a server (paid hosting minutes), private lobby (code, members, ready), in-session chat and car change
 8. Settings (gameplay, graphics/display, sound) on one page
 9. Controls (assign + calibrate merged, live input meters)
 10. Session — live timing (track map + full timing), full-screen monitor, replay controls
-11. Replays
+11. Replays, notifications, online/auth status
+12. Online — Competition System: account sign-up, hub, event, schedule, history & results, leaderboards & stats, career
 
 **P2 — completeness**
-12. Online competitions (daily races, special events, career, leaderboards, history, stats)
 13. Content (packages, updates, workshop)
 14. Profile
-15. Photo mode, first-launch setup
+15. Photo mode
 
-**Not planned:** store (keep the stock screen behind a link), material editor (dev tool), showroom/tuning (stock
+**Not planned:** first-launch wizard, legacy server list (a duplicate of the server list), store (keep the stock screen behind a link), material editor (dev tool), showroom/tuning (stock
 `/tuning` page stays until P2+).
 
 ## Engineering notes
