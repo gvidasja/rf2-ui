@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { exitFullScreen, focusNext, focusPrevious, transport, useSessionInfo, useStandings } from '../../api/session'
 import { clock } from '../../session/format'
 import { Button, Card, ReplayTransport, Stack, Text, useAction } from '../../ui'
 
 /** The full-screen monitor (native page MONITOR MAXIMIZED): only a bar at the bottom; H hides it. */
 export function Fullscreen() {
+  const navigate = useNavigate()
   const { data: info } = useSessionInfo()
   const { data: standings } = useStandings()
   const [live, setLive] = useState(true)
@@ -19,6 +21,9 @@ export function Fullscreen() {
         <Stack row gap={4}>
           <Button onClick={() => void exitFullScreen()} autoFocus>
             Exit full screen
+          </Button>
+          <Button onClick={() => navigate('/photo', { replace: true })} navId="photo">
+            Photo mode
           </Button>
           <Button size="s" variant="quiet" label="Previous car" onClick={() => void focusPrevious()}>‹</Button>
           <Text weight="medium" truncate>{focused ? `P${focused.position} · ${focused.driverName}` : ''}</Text>

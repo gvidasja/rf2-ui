@@ -17,6 +17,7 @@ import { Replays } from './screens/Replays'
 import { SettingsIndex, SettingsLayout, SettingsSection } from './screens/Settings'
 import { ChangeCar, Chat } from './screens/session/Chat'
 import { Fullscreen } from './screens/session/Fullscreen'
+import { PhotoMode } from './screens/session/PhotoMode'
 import { Garage } from './screens/session/Garage'
 import { Monitor } from './screens/session/Monitor'
 import { Results } from './screens/session/Results'
@@ -73,6 +74,8 @@ function EventApp() {
           </Route>
           {/* native page MONITOR MAXIMIZED opens #/fullscreen */}
           <Route path="fullscreen" element={<Frame hole="full" hints={['select']}><Screen id="event/fullscreen"><Fullscreen /></Screen></Frame>} />
+          {/* photo mode lives on the same full-screen page */}
+          <Route path="photo" element={<Frame hole="full" hints={['select']}><Screen id="event/photo"><PhotoMode /></Screen></Frame>} />
           {/* stock routes the game may open (#/watch, #/setup/…) */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -85,7 +88,7 @@ function EventApp() {
 function BackToMonitor() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  useAction('back', pathname !== '/' && pathname !== '/fullscreen' && (() => navigate('/', { replace: true })))
+  useAction('back', pathname !== '/' && pathname !== '/fullscreen' && pathname !== '/photo' && (() => navigate('/', { replace: true })))
   return null
 }
 

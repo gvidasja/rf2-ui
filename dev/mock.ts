@@ -102,6 +102,16 @@ export function mockGame(): Plugin {
           all[m[1]] = ' KP 9'
           return json(all)
         }
+        if (p === '/rest/options/photomode/long' || p === '/rest/options/photomode/float') {
+          const { photoModeOptionEntry, value } = JSON.parse(body) as { photoModeOptionEntry: string; value: number }
+          const o = (sample('rest_options_photomode_options') as Record<string, { currentValue: number; stringValue: string }>)[photoModeOptionEntry]
+          if (o) {
+            o.currentValue = value
+            o.stringValue = String(Math.round(value * 100) / 100)
+          }
+          return json(o)
+        }
+        if (p === '/rest/screenshot') return json('UserData\\ScreenShots\\photo_0001.png')
         if (p === '/rest/race/packages/setPackageState') {
           // the mock finishes the game's background work at once
           const { package: id, state } = JSON.parse(body) as { package: number; state: string }

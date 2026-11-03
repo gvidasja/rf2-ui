@@ -86,6 +86,15 @@ Status (P1, Nov 2026): done, apart from the parts left on the stock UI. Checked 
 14. Profile
 15. Photo mode
 
+Status (P2, Nov 2026): built, checked in a browser only (mock).
+- Content: package groups (`/rest/race/packagesV2`), install / uninstall / cancel by target state
+  (`setPackageState`), progress and Steam Workshop status. Deleting package files stays on the stock UI.
+- Profile: name and nickname (`POST /rest/profile`), Competition System ranks and career totals (`cs_user_get`).
+  Not available: nationality and helmet (no API), personal bests (stock reads local results files).
+- Photo mode: from the full-screen bar; target, mouse look, focus, lens and image options, reset, take photo
+  (`POST /rest/screenshot`, the panel hides for the shot).
+- Untested in game: all three, in particular real installs, the profile save and the screenshot.
+
 **Not planned:** first-launch wizard, legacy server list (a duplicate of the server list), store (keep the stock screen behind a link), material editor (dev tool), showroom/tuning (stock
 `/tuning` page stays until P2+).
 
