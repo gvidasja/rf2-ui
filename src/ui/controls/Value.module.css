@@ -1,0 +1,204 @@
+/* Stepper, segmented control, toggle and select share the control surface. */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: var(--h-control);
+  border-radius: var(--radius-m);
+  background: var(--c-control);
+}
+.stepBtn {
+  width: var(--h-control);
+  height: var(--h-control);
+  border: 0;
+  background: transparent;
+  color: var(--c-text-2);
+  font-size: 20px;
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  padding: 0;
+}
+.stepBtn:disabled {
+  color: var(--c-disabled);
+  cursor: default;
+}
+.value {
+  min-width: 96px;
+  height: var(--h-control);
+  line-height: var(--h-control);
+  padding: 0 var(--sp-1);
+  text-align: center;
+  font-size: 17px;
+  font-weight: var(--fw-medium);
+  color: var(--c-text);
+  border-radius: var(--radius-m);
+  white-space: nowrap;
+  cursor: text;
+}
+.editing {
+  background: var(--c-ground);
+}
+.caret {
+  border-right: 2px solid var(--c-focus);
+  margin-left: 1px;
+}
+.disabled {
+  opacity: 0.45;
+}
+.disabled .value {
+  cursor: default;
+}
+.changed {
+  box-shadow: 0 0 0 2px var(--c-warn);
+}
+.was {
+  margin-left: var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--c-warn);
+  white-space: nowrap;
+}
+
+.seg {
+  display: inline-flex;
+  flex: none;
+  border-radius: var(--radius-m);
+  background: var(--c-control);
+}
+.segOpt {
+  height: var(--h-control);
+  padding: 0 var(--sp-3);
+  border: 0;
+  background: transparent;
+  color: var(--c-text-2);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.segOpt:first-child {
+  border-radius: var(--radius-m) 0 0 var(--radius-m);
+}
+.segOpt:last-child {
+  border-radius: 0 var(--radius-m) var(--radius-m) 0;
+}
+.segOpt:disabled {
+  color: var(--c-disabled);
+  cursor: default;
+}
+.segOn {
+  background: var(--c-selected-bg);
+  color: var(--c-on-light);
+}
+.segDanger {
+  background: var(--c-error);
+  color: var(--c-on-light);
+}
+
+.toggle {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 30px;
+  border: 0;
+  border-radius: 15px;
+  background: var(--c-toggle-off);
+  cursor: pointer;
+  padding: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--c-text);
+}
+.toggleOn {
+  background: var(--c-action);
+}
+.toggleOn::after {
+  left: 25px;
+}
+.toggle:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.select {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.selectBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--h-control);
+  min-width: 170px;
+  padding: 0 36px 0 var(--sp-3);
+  border: 0;
+  border-radius: var(--radius-m);
+  background: var(--c-control);
+  color: var(--c-text);
+  font-size: var(--fs-secondary);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  text-align: left;
+}
+.selectBtn::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--c-muted);
+  border-bottom: 2px solid var(--c-muted);
+  transform: rotate(45deg);
+}
+.selectBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.listbox {
+  position: absolute;
+  z-index: 100;
+  top: 100%;
+  right: 0;
+  margin-top: var(--sp-1);
+  min-width: 100%;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: var(--sp-1);
+  border-radius: var(--radius-m);
+  background: var(--c-raised);
+  box-shadow: var(--shadow-popup);
+}
+.listboxUp {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: var(--sp-1);
+}
+.option {
+  display: block;
+  width: 100%;
+  height: var(--h-control);
+  padding: 0 var(--sp-3);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--c-text-2);
+  font-size: var(--fs-secondary);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.optionOn {
+  background: var(--c-control-hi);
+  color: var(--c-text);
+  font-weight: var(--fw-medium);
+}

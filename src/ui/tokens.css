@@ -1,0 +1,174 @@
+/*
+  Design tokens: the only place with raw colours, sizes and fonts. Components reference these variables;
+  screens never have CSS of their own. Values follow the "Design system" board.
+  Chromium 75 (the game's CEF): no flex `gap`, `:focus-visible`, `:is()`, `inset`, `aspect-ratio`, `clamp()`.
+*/
+/* The game ships Ubuntu with its UI framework (served at /framework by the stock ui.framework bundle). */
+@font-face {
+  font-family: Ubuntu;
+  font-weight: 400;
+  src: url(/framework/fonts/ubuntu/ubuntu-v14-latin-regular.woff2) format('woff2');
+}
+@font-face {
+  font-family: Ubuntu;
+  font-weight: 500;
+  src: url(/framework/fonts/ubuntu/ubuntu-v14-latin-500.woff2) format('woff2');
+}
+@font-face {
+  font-family: Ubuntu;
+  font-weight: 700;
+  src: url(/framework/fonts/ubuntu/ubuntu-v14-latin-700.woff2) format('woff2');
+}
+
+:root {
+  /* colour */
+  --c-ground: #0f1113;
+  --c-sidebar: #15181b;
+  --c-surface: #171a1d;
+  --c-surface-head: #1b1f23;
+  --c-raised: #1e2226;
+  --c-control: #22272c;
+  --c-control-hi: #262b31;
+  --c-kbd: #2c3238;
+  --c-line: #2a2f35;
+  --c-hairline: #1c2024;
+  --c-text: #eceff2;
+  --c-text-2: #c9d0d7;
+  --c-muted: #9aa3ad;
+  --c-disabled: #6e7781;
+  --c-on-light: #111111;
+  --c-selected-bg: #eceff2;
+  --c-action: #ff5a1f;
+  --c-action-text: #ff8a5c;
+  --c-action-bg: #3a1e12;
+  --c-focus: #ffd23f;
+  --c-good: #6fd9a4;
+  --c-good-bg: #173226;
+  --c-warn: #f5c451;
+  --c-warn-bg: #3a2f12;
+  --c-info: #7cc4ff;
+  --c-info-bg: #122b3d;
+  --c-error: #ff6b6b;
+  --c-error-bg: #3d1717;
+  --c-row-selected: #2a2219;
+  --c-toggle-off: #3a4048;
+  --shadow-popup: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+  /* type */
+  --font: Ubuntu, system-ui, sans-serif;
+  --fs-display: 56px;
+  --fs-h1: 36px;
+  --fs-title: 22px;
+  --fs-body: 18px;
+  --fs-secondary: 16px;
+  --fs-label: 15px;
+  --fs-small: 14px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+  --lh: 1.4;
+  --label-tracking: 0.07em;
+
+  /* shape */
+  --radius-s: 4px;
+  --radius-m: 6px;
+  --radius-l: 8px;
+  --border: 0;
+  --hairline: 1px solid var(--c-hairline);
+  --focus-ring: 3px solid var(--c-focus);
+  --focus-offset: 2px;
+
+  /* space */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 32px;
+  --sp-8: 48px;
+  --sp-9: 64px;
+
+  /* sizes */
+  --h-control: 40px;
+  --h-button: 48px;
+  --h-button-s: 40px;
+  --h-button-l: 64px;
+  --h-row: 52px;
+  --h-topbar: 64px;
+  --h-subnav: 56px;
+  --h-hintbar: 40px;
+  --w-menu: 560px;
+
+  /* The native 3D monitor (UI.OSC MONITORPAGE, in the 1920×1080 layout). Fixed by the game. */
+  --monitor-x: 30px;
+  --monitor-y: 255px;
+  --monitor-w: 793px;
+  --monitor-h: 465px;
+
+  /* page background; transparent on the event page so the 3D view can show through a hole */
+  --c-page: var(--c-ground);
+
+  /* motion: none by principle; kept as a variable so it can be tuned globally */
+  --t-fast: 0ms;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--c-page);
+  color: var(--c-text);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: var(--lh);
+  font-feature-settings: 'tnum' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Element resets live here, not in component classes, so stack spacing (margins) is never overridden. */
+h1,
+h2,
+h3,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* One always-visible focus ring (Keyboard & controller board, rule 1). */
+:focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-control-hi);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

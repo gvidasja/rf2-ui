@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build && bun bundle/build.ts",
     "game:install": "tsc -b && vite build && bun bundle/build.ts install",
     "game:uninstall": "bun bundle/build.ts uninstall",
-    "lint": "eslint ."
+    "lint": "eslint src dev bundle/build.ts vite.config.ts"
   },
   "dependencies": {
     "core-js": "^3.45.1",

@@ -49,6 +49,14 @@ Top level (persistent top bar): **Race** (single player) · **Online** · **Repl
 5. Session — garage / setup
 6. Session — controls (next session, restart, add/remove AI) and results
 
+Status (P0, Nov 2026): built and installed. All screens were checked in a browser against saved API samples
+(`MOCK=1 bun run dev`); only the main menu was seen in game, in the earlier menu-only build, so the session pages are untested there.
+- Main menu, race setup, car/track pickers, opponent field, loading (`/loading` page).
+- Session (`/event` page): monitor (camera, focused car, replay transport, your car, running order, around the native 3D hole),
+  garage (all setup categories, per-corner grid, saved setups), session controls (next/finish/restart, add/remove AI), results,
+  full-screen monitor bar.
+- Not yet: weather forecast editor, live timing tab, in-session car change, settings (P1).
+
 **P1 — complete daily use**
 7. Online — hosted servers: browser + join (password, car, drive/spectate), host a server (paid hosting minutes), private lobby (code, members, ready), in-session chat and car change
 8. Settings (gameplay, graphics/display, sound) on one page
@@ -65,10 +73,21 @@ Top level (persistent top bar): **Race** (single player) · **Online** · **Repl
 **Not planned:** first-launch wizard, legacy server list (a duplicate of the server list), store (keep the stock screen behind a link), material editor (dev tool), showroom/tuning (stock
 `/tuning` page stays until P2+).
 
+## Later / on hold
+
+- **External launcher** (an app outside the game that starts a race already configured). Findings in
+  `reference/EXTERNAL_LAUNCH.md`:
+  - Session settings are the `player.JSON` entries. Editing the file while the game is closed works; this was tested.
+  - Car and track are file paths in the same file; the track also stores a scene signature, untested.
+  - The bundle would call start-race once the game reaches the menu.
+- **Native extensions**: see `reference/EXTENDING_NATIVES.md`. Hooking is acceptable, since the game no longer gets updates.
+
 ## Engineering notes
 
 - Session settings: use `/rest/rf2ui/sessions/settings/{key}` (absolute) for LONG/BOOL, the `GAMEOPT_*` options for AI
   floats; re-fetch after weather / finish-criteria changes (see `reference/SETTINGS.md`).
-- Event pages stay in the stock `/event` app until P0.4 lands; then serve our own page there (same bundle trick as
-  `/start/index.html`).
-- The driver-labels browser (`#/driver-labels`) must keep working when the event app is replaced.
+- The bundle serves the same loader at `/start`, `/event` and `/loading` (the game's three native pages); the app picks
+  its screens by path (`?page=event` in browser dev). Each keeps its stock page at `<page>/stock.html`.
+- The driver-labels browser (`/event/index.html#/driver-labels`, a texture for the name tags in 3D) is redirected to the
+  stock event page.
+- The event page is transparent; `Frame hole` paints everything except the native monitor rect (tokens `--monitor-*`).

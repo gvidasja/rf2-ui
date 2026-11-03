@@ -31,9 +31,14 @@ const resource = (prefix: string, pattern: string): Props => ({
 // Dependency Manager component descriptors (what the DM annotations would generate).
 // Exact resource patterns win over the stock start app's "/start/*"; for an exact match Felix
 // serves `prefix` itself as the file.
+// The game switches between three native pages (start, event, loading); all get the same loader, and each
+// keeps its stock page at <app>/stock.html for the OLD UI switch and the driver-labels browser.
+const APPS = ["start", "event", "loading"] as const
 const components: { id: string; lines: object[] }[] = [
-  { id: "StartPage", lines: [component("Resources", resource("/static/start/index.html", "/start/index.html"))] },
-  { id: "StockStartPage", lines: [component("Resources", resource("/static/start/stock.html", "/start/stock.html"))] },
+  ...APPS.flatMap((app) => [
+    { id: `Page_${app}`, lines: [component("Resources", resource("/static/start/index.html", `/${app}/index.html`))] },
+    { id: `StockPage_${app}`, lines: [component("Resources", resource(`/static/${app}/stock.html`, `/${app}/stock.html`))] },
+  ]),
   { id: "Ui", lines: [component("Resources", resource("/static/rf2ui", "/rf2ui/*"))] },
   {
     id: "RestApp",
@@ -96,25 +101,33 @@ async function build() {
   cpSync(join(here, "static"), join(out, "static"), { recursive: true });
   cpSync(uiDist, join(out, "static", "rf2ui"), { recursive: true });
 
-  // The stock start page, kept reachable at /start/stock.html. Copied from the installed game so its
+  // The stock pages, kept reachable at /<app>/stock.html. Copied from the installed game so their
   // hashed script names always match.
-  const tmp = join(out, ".stock");
-  mkdirSync(tmp);
-  await $`jar xf ${join(bundlesDir, "net.rfactor2.app.start.jar")} static/start/index.html`.cwd(tmp).quiet();
-  const stock = readFileSync(join(tmp, "static", "start", "index.html"), "utf8");
-  rmSync(tmp, { recursive: true });
-  // A way back to the new UI (clears the flag set by src/stockUi.ts).
+  // A way back to the new UI (clears the flag set by src/stockUi.ts). Not on the driver-labels page,
+  // which the game uses as a texture for the name tags in the 3D view.
   const backButton = `
 <div id="rf2ui-back" style="position:fixed;right:4px;bottom:4px;z-index:99999;padding:2px 8px;font:12px sans-serif;color:#000;background:#fc0;border-radius:3px;cursor:pointer">NEW UI</div>
 <script>
-  document.getElementById('rf2ui-back').onclick = function () {
-    try { sessionStorage.removeItem('rf2ui.stockUi') } catch (e) {}
-    location.href = '/start/index.html'
-  }
+  (function () {
+    var b = document.getElementById('rf2ui-back')
+    if (/^#\\/driver-labels/.test(location.hash)) return b.parentNode.removeChild(b)
+    b.onclick = function () {
+      try { sessionStorage.removeItem('rf2ui.stockUi') } catch (e) {}
+      location.href = location.pathname.replace(/stock\\.html$/, 'index.html')
+    }
+  })()
 </script>
 `;
-  if (!stock.includes("</body>")) throw new Error("stock start page has no </body>");
-  writeFileSync(join(out, "static", "start", "stock.html"), stock.replace("</body>", backButton + "</body>"));
+  for (const app of APPS) {
+    const tmp = join(out, ".stock");
+    mkdirSync(tmp);
+    await $`jar xf ${join(bundlesDir, `net.rfactor2.app.${app}.jar`)} static/${app}/index.html`.cwd(tmp).quiet();
+    const stock = readFileSync(join(tmp, "static", app, "index.html"), "utf8");
+    rmSync(tmp, { recursive: true });
+    if (!stock.includes("</body>")) throw new Error(`stock ${app} page has no </body>`);
+    mkdirSync(join(out, "static", app), { recursive: true });
+    writeFileSync(join(out, "static", app, "stock.html"), stock.replace("</body>", backButton + "</body>"));
+  }
 
   const descriptors: string[] = [];
   for (const c of components) {
@@ -135,13 +148,22 @@ async function build() {
       `DependencyManager-Component: ${descriptors.join(",")}`,
       'Require-Capability: osgi.extender;filter:="(&(osgi.extender=org.apache.felix.dependencymanager.runtime)(version>=4.0.0))"',
       "",
-    ].join("\n"),
+    ]
+      .map(wrapManifestLine)
+      .join("\n"),
   );
 
   rmSync(join(dist, JAR), { force: true });
   await $`jar cfm ${join(dist, JAR)} ${manifestPath} -C ${out} .`.quiet();
   rmSync(manifestPath);
   console.log(`built bundle/dist/${JAR}`);
+}
+
+// Manifest lines are limited to 72 bytes; longer ones continue on lines starting with a space.
+function wrapManifestLine(line: string) {
+  const parts = [line.slice(0, 70)];
+  for (let i = 70; i < line.length; i += 69) parts.push(" " + line.slice(i, i + 69));
+  return parts.join("\n");
 }
 
 async function assertGameStopped() {

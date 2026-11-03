@@ -1,10 +1,13 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig, transformWithEsbuild, type Plugin } from 'vite'
+import { mockGame } from './dev/mock'
 
 // rFactor 2 renders the UI with CEF 75 (Chromium 75).
 const TARGET = 'chrome75'
 const GAME = 'http://localhost:5397'
 const DEV_PORT = 5173
+// MOCK=1: answer API calls from saved samples instead of proxying to the game (dev/mock.ts).
+const MOCK = !!process.env.MOCK
 
 /**
  * Vite's dev server ships modern syntax (its own client, the React refresh runtime, and our modules,
@@ -43,16 +46,19 @@ export default defineConfig({
   optimizeDeps: {
     esbuildOptions: { target: TARGET },
   },
-  plugins: [react(), downlevelForGame()],
+  plugins: [react(), downlevelForGame(), ...(MOCK ? [mockGame()] : [])],
   server: {
     port: DEV_PORT,
     strictPort: true,
     // The game page (localhost:5397) loads modules from here; asset URLs must point back here too.
     origin: `http://localhost:${DEV_PORT}`,
     // Browser dev (http://localhost:5173/rf2ui/): forward API calls to the running game.
-    proxy: {
+    proxy: MOCK
+      ? undefined
+      : {
       '/rest': { target: GAME, ws: true },
       '/navigation': GAME,
+      '/framework': GAME,
     },
   },
 })

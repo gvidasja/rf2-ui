@@ -1,28 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { asset } from './api'
-import { App } from './App/App'
-import './index.css'
-
 import 'core-js/features/array/at'
 import 'core-js/features/string/at'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { App } from './App'
+import { installInput } from './ui'
+import './ui/tokens.css'
 
-const font = document.createElement('link')
-font.rel = 'stylesheet'
-font.href = asset('ubuntu-v14-latin-regular.css')
-document.head.appendChild(font)
-
-// function toAlert(...msg: any[]) {
-//   alert(msg.map((x) => x.toString()).join(' '))
-// }
-
-// console.error = toAlert
-// console.log = toAlert
-// console.warn = toAlert
-// window.onerror = toAlert
+installInput()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />,
+    <App />
   </React.StrictMode>,
 )

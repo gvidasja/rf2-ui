@@ -10,8 +10,8 @@ That server is Jetty inside the game's Java/OSGi runtime, and the game's bootstr
 
 | URL | What |
 |---|---|
-| `/start/index.html` | loader page (`bundle/static/start/index.html`); overrides the stock start page |
-| `/start/stock.html` | the stock start page, as an escape hatch |
+| `/start/index.html`, `/event/index.html`, `/loading/index.html` | the loader page (`bundle/static/start/index.html`); overrides the stock pages the game switches between |
+| `/<page>/stock.html` | the stock pages, for the OLD UI switch (and the in-session driver-labels browser) |
 | `/rf2ui/*` | the built React app (`dist/`) |
 | `/rest/rf2ui/*` | extra REST endpoints (`bundle/src/`, Java 8) |
 
@@ -38,11 +38,26 @@ bun run dev
 - **In game:** with the dev server running, start the game (or reload the UI page). A yellow `DEV` badge
   shows the UI comes from Vite; edits hot-reload in the game. Only Java/loader changes need `game:install`.
 - **In a browser:** `http://localhost:5173/rf2ui/`. API calls are proxied to the running game.
+- **Without the game:** `MOCK=1 bun run dev` answers the API from the samples saved by `reference/dump.ts`
+  (`dev/mock.ts`; writes are kept in memory).
 - DevTools for the in-game page: add `--remote-debugging-port=9222` to the game's launch options and open
   `http://localhost:9222`.
 
 Chromium 75 constraints: no top-level await, optional chaining or `??` in shipped code (Vite lowers syntax to
 `chrome75` in both dev and build), and newer runtime APIs need polyfills (`core-js` imports in `src/main.tsx`).
+
+## UI code
+
+- `src/ui/`: the component library (the "Components" board of the design). It is the only code with CSS.
+  - All values come from the variables in `src/ui/tokens.css`, so colours, fonts and sizes change globally there.
+  - Screens (`src/screens/`) compose components and layout primitives (`Stack`, `Grid`, `Text`) and have no styles.
+    If a screen seems to need CSS, add or extend a component.
+- `src/ui/input/`: keyboard, gamepad and wheel input.
+  - Arrows move focus spatially; value controls take ← → themselves.
+  - Other actions (`primary` S/Start, `back` Esc/B, `tabPrev`/`tabNext` Q/E or LB/RB, `search`, …) are
+    registered with `useAction`, and the hint bar lists them automatically.
+- `src/api/`: typed calls (types from `reference/rf2-api.ts`) and a small shared cache. Session settings are
+  updated optimistically; per setting, only the latest value is sent.
 
 ## REST API notes
 

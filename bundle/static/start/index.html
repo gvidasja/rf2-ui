@@ -1,6 +1,7 @@
 <!doctype html>
 <!--
-  Served by the bundle at /start/index.html, the page rFactor 2 opens on startup.
+  Served by the bundle at /start/index.html (the page rFactor 2 opens on startup), /event/index.html and
+  /loading/index.html: the game switches between these native pages; the app picks its screens by path.
   If the Vite dev server is running (bun run dev) the UI is loaded from it with hot reload,
   otherwise the build packed into the jar is used. Add ?prod to force the packed build.
 -->
@@ -9,7 +10,9 @@
     <meta charset="utf-8" />
     <title>rFactor2</title>
     <style>
-      html, body { margin: 0; height: 100%; background: #111; }
+      html, body { margin: 0; height: 100%; background: #0f1113; }
+      /* in a session the native 3D view sits behind this page: stay see-through (the app paints the rest) */
+      html.rf2ui-event, html.rf2ui-event body { background: transparent; }
       #rf2ui-dev-badge { position: fixed; right: 4px; bottom: 4px; z-index: 99999; padding: 1px 6px;
         font: 11px sans-serif; color: #000; background: #fc0; border-radius: 3px; pointer-events: none; }
     </style>
@@ -25,12 +28,20 @@
         }
       }
 
+      if (/^\/event\//.test(location.pathname)) document.documentElement.className = 'rf2ui-event';
+
       (function () {
+        var stock = location.pathname.replace(/index\.html$/, 'stock.html')
+        // The 1024×1024 browser that renders the name tags above cars (a texture in the 3D view) stays stock.
+        if (/^\/event\//.test(location.pathname) && /^#\/driver-labels/.test(location.hash)) {
+          location.replace(stock + location.hash)
+          return
+        }
         // "OLD UI" was chosen this game session (src/stockUi.ts): the game navigates here on its own
         // at times, so keep sending it to the stock page.
         try {
           if (sessionStorage.getItem('rf2ui.stockUi') === '1') {
-            location.replace('/start/stock.html' + (location.hash || '#/start'))
+            location.replace(stock + location.hash)
             return
           }
         } catch (e) {}

@@ -1,0 +1,30 @@
+.map {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-m);
+  background: var(--c-surface-head);
+  overflow: hidden;
+}
+.map svg {
+  width: 100%;
+  height: 100%;
+}
+.line {
+  fill: none;
+  stroke: var(--c-text);
+  stroke-width: var(--trackmap-width, 10);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.pit {
+  fill: none;
+  stroke: var(--c-muted);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.empty {
+  color: var(--c-muted);
+  font-size: var(--fs-label);
+}

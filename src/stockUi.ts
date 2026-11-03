@@ -8,5 +8,7 @@ export function switchToStockUi() {
   } catch {
     // storage unavailable: still switch, just not sticky
   }
-  location.href = '/start/stock.html#/start'
+  // the same native page's stock copy (bundle/build.ts): /start, /event or /loading
+  const page = location.pathname.match(/^\/(start|event|loading)\//)?.[1] ?? 'start'
+  location.href = `/${page}/stock.html${page === 'start' ? '#/start' : location.hash}`
 }

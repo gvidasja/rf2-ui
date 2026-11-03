@@ -1,0 +1,44 @@
+/* Flex `gap` needs Chromium 84; the game has 75, so stacks space children with margins. */
+.stack {
+  display: flex;
+  min-width: 0;
+}
+.v {
+  flex-direction: column;
+}
+.v > * + * {
+  margin-top: var(--gap);
+}
+.h {
+  flex-direction: row;
+}
+.h > * + * {
+  margin-left: var(--gap);
+}
+.wrap {
+  flex-wrap: wrap;
+  margin: calc(var(--gap) / -2);
+}
+.wrap > * {
+  margin: calc(var(--gap) / 2) !important;
+}
+.grow {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+}
+.scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.fill {
+  height: 100%;
+}
+.grid {
+  display: grid;
+  min-height: 0;
+  min-width: 0;
+}
+.spacer {
+  flex: 1 1 auto;
+}

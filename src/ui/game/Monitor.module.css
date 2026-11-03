@@ -1,0 +1,82 @@
+/* Slots around the native 3D monitor; coordinates are relative to the frame content (which starts
+   below the session bar and its tabs). */
+.layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.above,
+.below,
+.side {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.above {
+  left: var(--monitor-x);
+  width: var(--monitor-w);
+  top: 0;
+  height: calc(var(--monitor-y) - var(--h-topbar) - var(--h-subnav));
+  justify-content: center;
+}
+.below {
+  left: var(--monitor-x);
+  width: var(--monitor-w);
+  top: calc(var(--monitor-y) + var(--monitor-h) - var(--h-topbar) - var(--h-subnav));
+  bottom: var(--sp-5);
+}
+.side {
+  left: calc(var(--monitor-x) + var(--monitor-w) + var(--sp-7));
+  right: var(--sp-7);
+  top: var(--sp-5);
+  bottom: var(--sp-5);
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: var(--h-button);
+  padding: 0 var(--sp-2);
+  background: var(--c-surface);
+}
+.transport > * + * {
+  margin-left: var(--sp-1);
+}
+.transportBtn {
+  width: 44px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--c-text-2);
+  font-size: var(--fs-secondary);
+  cursor: pointer;
+}
+.transportBtn:focus {
+  outline-offset: -3px;
+}
+.transportGap {
+  flex: 1 1 auto;
+}
+.live {
+  color: var(--c-error);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+.replay {
+  color: var(--c-info);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+.clock {
+  margin-left: var(--sp-4) !important;
+  margin-right: var(--sp-2);
+  font-weight: var(--fw-medium);
+}
