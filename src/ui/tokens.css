@@ -22,20 +22,20 @@
 
 :root {
   /* colour */
-  --c-ground: #0f1113;
-  --c-sidebar: #15181b;
-  --c-surface: #171a1d;
-  --c-surface-head: #1b1f23;
-  --c-raised: #1e2226;
-  --c-control: #22272c;
-  --c-control-hi: #262b31;
-  --c-kbd: #2c3238;
-  --c-line: #2a2f35;
-  --c-hairline: #1c2024;
-  --c-text: #eceff2;
-  --c-text-2: #c9d0d7;
-  --c-muted: #9aa3ad;
-  --c-disabled: #6e7781;
+  --c-ground: #0a0b0d;
+  --c-sidebar: #13161a;
+  --c-surface: #181c21;
+  --c-surface-head: #1e2329;
+  --c-raised: #242a31;
+  --c-control: #2b3239;
+  --c-control-hi: #343c45;
+  --c-kbd: #38404a;
+  --c-line: #3a424c;
+  --c-hairline: #272d34;
+  --c-text: #f5f7f9;
+  --c-text-2: #dfe4e9;
+  --c-muted: #b1bac4;
+  --c-disabled: #7d8691;
   --c-on-light: #111111;
   --c-selected-bg: #eceff2;
   --c-action: #ff5a1f;
@@ -43,7 +43,7 @@
   --c-action-bg: #3a1e12;
   --c-focus: rgba(255, 255, 255, 0.45);
   /* hover and keyboard / controller focus: a tint over the element's own background */
-  --c-hover: rgba(255, 255, 255, 0.1);
+  --c-hover: rgba(255, 255, 255, 0.13);
   --c-hover-on-light: rgba(0, 0, 0, 0.14);
   --hover-tint: inset 0 0 0 100vmax var(--c-hover);
   --hover-tint-on-light: inset 0 0 0 100vmax var(--c-hover-on-light);
@@ -55,9 +55,9 @@
   --c-info-bg: #122b3d;
   --c-error: #ff6b6b;
   --c-error-bg: #3d1717;
-  --c-row-selected: #2a2219;
-  --c-toggle-off: #3a4048;
-  --c-trackmap-dim: #5a626c;
+  --c-row-selected: #33261b;
+  --c-toggle-off: #4d555f;
+  --c-trackmap-dim: #6f7882;
   /* timing: session best (purple) and personal best (green); always paired with SB / PB text */
   --c-session-best: #cdb4ff;
   --c-personal-best: var(--c-good);
@@ -65,17 +65,17 @@
 
   /* type */
   --font: Ubuntu, system-ui, sans-serif;
-  --fs-display: 56px;
-  --fs-h1: 36px;
-  --fs-title: 22px;
-  --fs-body: 18px;
-  --fs-secondary: 16px;
+  --fs-display: 48px;
+  --fs-h1: 32px;
+  --fs-title: 21px;
+  --fs-body: 17px;
+  --fs-secondary: 15px;
   --fs-label: 15px;
   --fs-small: 14px;
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-bold: 700;
-  --lh: 1.4;
+  --lh: 1.35;
   --label-tracking: 0.07em;
 
   /* shape */
@@ -88,28 +88,28 @@
   /* space */
   --sp-1: 4px;
   --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-7: 32px;
-  --sp-8: 48px;
-  --sp-9: 64px;
+  --sp-3: 10px;
+  --sp-4: 12px;
+  --sp-5: 16px;
+  --sp-6: 20px;
+  --sp-7: 24px;
+  --sp-8: 32px;
+  --sp-9: 48px;
 
   /* sizes */
-  --h-control: 40px;
-  --h-meter: 14px;
-  --h-button: 48px;
-  --h-button-s: 40px;
-  --h-button-l: 64px;
-  --h-row: 52px;
-  --h-topbar: 64px;
-  --h-subnav: 56px;
-  --h-hintbar: 40px;
+  --h-control: 36px;
+  --h-meter: 12px;
+  --h-button: 42px;
+  --h-button-s: 36px;
+  --h-button-l: 54px;
+  --h-row: 44px;
+  --h-topbar: 56px;
+  --h-subnav: 48px;
+  --h-hintbar: 36px;
   /* the menu rail on every menu screen */
-  --h-menu-item: 60px;
-  --fs-menu-item: 22px;
-  --fs-menu-brand: 30px;
+  --h-menu-item: 50px;
+  --fs-menu-item: 20px;
+  --fs-menu-brand: 28px;
 
   /* The native 3D monitor (UI.OSC MONITORPAGE, in the 1920×1080 layout). Fixed by the game. */
   --monitor-x: 30px;

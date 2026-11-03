@@ -25,7 +25,7 @@
 }
 .l {
   height: var(--h-button-l);
-  padding: 0 36px;
+  padding: 0 var(--sp-7);
   font-size: var(--fs-title);
 }
 .primary {
