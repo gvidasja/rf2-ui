@@ -123,3 +123,10 @@ export function markNotificationsSeen(list: Notification[]) {
     // per-viewer convenience only
   }
 }
+
+/** The Competition System driver record (ranks and career totals), as the stock UI reads it. */
+export type Rank = { rank: string; tier: number; progress: number }
+export type DriverStats = { races: number; wins: number; podiums: number; top5: number; dnfs: number; polePositions: number; fastestLaps: number; lapsLead: number; lapsCompleted: number }
+export type Driver = { name?: string; username?: string; driverRank?: Rank; safetyRank?: Rank; stats?: { total?: Partial<DriverStats> } }
+
+export const useDriver = (enabled: boolean) => useResource(enabled ? 'account/driver' : null, () => rpc<Driver>('cs_user_get', {}))

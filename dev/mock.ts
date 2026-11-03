@@ -102,6 +102,14 @@ export function mockGame(): Plugin {
           all[m[1]] = ' KP 9'
           return json(all)
         }
+        if (p === '/rest/race/packages/setPackageState') {
+          // the mock finishes the game's background work at once
+          const { package: id, state } = JSON.parse(body) as { package: number; state: string }
+          const all = sample('rest_race_packagesV2') as Record<string, { state: string; targetState: string }>
+          const g = all[String(id)]
+          if (g) g.targetState = g.state = state === 'INSTALL' ? 'INSTALLED' : 'UNINSTALLED'
+          return json(undefined)
+        }
         if (p === '/rest/options/float' || p === '/rest/options/long') {
           const { optionEntry, value } = JSON.parse(body)
           const key = { GAMEOPT_ai_aggression: 'SESSSET_AI_Aggression', GAMEOPT_ai_limiter: 'SESSSET_AI_Limiter' }[optionEntry as string]

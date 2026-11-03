@@ -3,9 +3,9 @@ export const AREAS = [
   { id: 'race', label: 'Race', path: '/race' },
   { id: 'online', label: 'Online', path: '/online' },
   { id: 'replays', label: 'Replays', path: '/replays' },
-  { id: 'content', label: 'Content', path: '/stock/content' },
+  { id: 'content', label: 'Content', path: '/content' },
   { id: 'settings', label: 'Settings', path: '/settings' },
-  { id: 'profile', label: 'Profile', path: '/stock/profile' },
+  { id: 'profile', label: 'Profile', path: '/profile' },
 ]
 
 export const areaLabel = (id: string) => AREAS.find((a) => a.id === id)?.label

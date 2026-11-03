@@ -1,5 +1,5 @@
-import type { BundledState, Car, NavigationAction, RaceSelection, RaceTrack, Waypoint } from '../../reference/rf2-api'
-import { get, postText } from './http'
+import type { BundledState, Car, Profile, NavigationAction, RaceSelection, RaceTrack, Waypoint } from '../../reference/rf2-api'
+import { get, postJson, postText } from './http'
 import { invalidate, mutate, preload, useResource } from './resource'
 
 const SELECTION = 'race/selection'
@@ -9,7 +9,7 @@ const TRACKS = 'race/tracks'
 const loadSelection = () => get<RaceSelection>('/rest/race/selection?locale=en-US')
 const loadCars = () => get<Car[]>('/rest/race/car?locale=en-US')
 const loadTracks = () => get<RaceTrack[]>('/rest/race/track?locale=en-US')
-const loadProfile = () => get<{ name?: string; nick?: string }>('/rest/profile')
+const loadProfile = () => get<Profile>('/rest/profile')
 
 export const useSelection = () => useResource(SELECTION, loadSelection)
 export const useCars = () => useResource(CARS, loadCars)
@@ -59,3 +59,9 @@ export const navigate = (action: NavigationAction) => postText(`/navigation/acti
 
 export const carImage = (car: Car | undefined) => car?.id && `/rest/race/car/${car.id}/image?type=IMAGE_SMALL`
 export const trackImage = (track: RaceTrack | undefined) => track?.id && `/rest/race/track/${track.id}/image`
+
+/** Save the player's name and nickname (the game keeps them in its profile). */
+export async function saveProfile(profile: { name: string; nick: string; steamID?: string }) {
+  await postJson('/rest/profile', profile)
+  invalidate('profile')
+}

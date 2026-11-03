@@ -7,10 +7,12 @@ import { Loading } from './screens/Loading'
 import { areaLabel } from './screens/areas'
 import { MenuFrame, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
+import { Content } from './screens/Content'
 import { Controls } from './screens/Controls'
 import { RaceSetup } from './screens/RaceSetup'
 import { Joined, OnlineFrame, OnlinePlaceholder } from './screens/online/Online'
 import { Servers } from './screens/online/Servers'
+import { Profile } from './screens/Profile'
 import { Replays } from './screens/Replays'
 import { SettingsIndex, SettingsLayout, SettingsSection } from './screens/Settings'
 import { ChangeCar, Chat } from './screens/session/Chat'
@@ -109,6 +111,8 @@ function StartApp() {
               <Route path="lobby" element={<Routed id="online/lobby" element={<OnlinePlaceholder section="lobby" />} />} />
             </Route>
             <Route path="replays" element={<Routed id="replays" element={<Replays />} />} />
+            <Route path="content" element={<Routed id="content" element={<Content />} />} />
+            <Route path="profile" element={<Routed id="profile" element={<Profile />} />} />
             <Route path="notifications" element={<Routed id="notifications" element={<Notifications />} />} />
             <Route path="settings" element={<SettingsLayout />}>
               <Route index element={<SettingsIndex />} />
