@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { confirmGraphics, useGraphicsStatus, useOptions } from '../api/options'
 import { OptionRow } from '../settings/OptionControl'
 import { SECTIONS } from '../settings/options'
@@ -20,6 +21,7 @@ function columns<T extends { items: unknown[] }>(sections: T[]): [T[], T[]] {
 
 /** Every option on one page; the index only scrolls. Changes save instantly. */
 export function Settings() {
+  const navigate = useNavigate()
   const { data, error } = useOptions()
   const { data: graphics } = useGraphicsStatus()
   const [query, setQuery] = useState('')
@@ -65,6 +67,9 @@ export function Settings() {
               }}
               groups={[{ items: sections.map((s) => ({ id: s.id, label: s.title, meta: query ? s.items.length : undefined })) }]}
             />
+            <Button full onClick={() => navigate('/settings/controls')} navId="controls">
+              Controls ›
+            </Button>
             <Text variant="small" tone="muted">
               Changes save instantly.
             </Text>

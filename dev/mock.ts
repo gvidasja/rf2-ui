@@ -66,6 +66,13 @@ export function mockGame(): Plugin {
           s.stringValue = String(value)
           return json(s)
         }
+        if ((m = p.match(/^\/rest\/options\/assign\/(CC_\w+)$/))) {
+          // the game answers once the player pressed something; pretend they pressed Num 9 after a moment
+          const all = sample('rest_options_assign') as Record<string, string>
+          await new Promise((r) => setTimeout(r, 2500))
+          all[m[1]] = ' KP 9'
+          return json(all)
+        }
         if (p === '/rest/options/float' || p === '/rest/options/long') {
           const { optionEntry, value } = JSON.parse(body)
           const key = { GAMEOPT_ai_aggression: 'SESSSET_AI_Aggression', GAMEOPT_ai_limiter: 'SESSSET_AI_Limiter' }[optionEntry as string]

@@ -1,0 +1,25 @@
+.meter {
+  position: relative;
+  height: var(--h-meter);
+  border-radius: calc(var(--h-meter) / 2);
+  background: var(--c-control-hi);
+  overflow: hidden;
+}
+.fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--c-text);
+}
+.mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--c-muted);
+}
+.center {
+  left: 50%;
+  background: var(--c-action);
+}

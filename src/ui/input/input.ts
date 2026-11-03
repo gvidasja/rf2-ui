@@ -157,7 +157,17 @@ export function trigger(action: Action): boolean {
 
 const ARROWS: Record<string, Direction> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' }
 
+// While the game listens for a control assignment, every key and button belongs to the game.
+let suspended = false
+export function suspendInput(on: boolean) {
+  suspended = on
+}
+
 function onKeyDown(e: KeyboardEvent) {
+  if (suspended) {
+    e.preventDefault()
+    return
+  }
   if (e.isTrusted) setDevice('keyboard')
   if (e.defaultPrevented) return
   const target = document.activeElement as HTMLElement | null
@@ -228,8 +238,8 @@ function pollGamepads(now: number) {
     const s = pad.get(i) ?? { pressed: false, since: 0, last: 0 }
     if (pressed && !s.pressed) {
       s.since = s.last = now
-      press(i)
-    } else if (pressed && REPEATING.has(i) && now - s.since > REPEAT_DELAY && now - s.last > REPEAT_RATE) {
+      if (!suspended) press(i)
+    } else if (!suspended && pressed && REPEATING.has(i) && now - s.since > REPEAT_DELAY && now - s.last > REPEAT_RATE) {
       s.last = now
       press(i)
     }

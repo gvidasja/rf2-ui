@@ -50,7 +50,7 @@ export function SessionFrame() {
             </PrimaryButton>
           }
           tabs={SESSION_TABS}
-          current={pathname}
+          current={SESSION_TABS.find((t) => t.id !== '/' && pathname.startsWith(t.id))?.id ?? pathname}
           onTab={(id) => navigate(id, { replace: true })}
         />
       }

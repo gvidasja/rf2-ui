@@ -6,12 +6,15 @@ import { invalidate, mutate, peek, useResource } from './resource'
 
 export type Options = Partial<Record<OptionEntry, Option>>
 
-const GROUPS = ['difficulty', 'display', 'sound', 'network', 'replay'] as const
+const GROUPS = ['difficulty', 'display', 'sound', 'network', 'replay', 'calibrate'] as const
 const KEY = 'options/all'
 
 async function loadOptions(): Promise<Options> {
   const parts = await Promise.all(GROUPS.map((g) => get<Options>(`/rest/options/${g}`).catch(() => ({}) as Options)))
-  return Object.assign({}, ...parts)
+  const all: Options = {}
+  // calibrate also lists the axis limits, which are not options (null)
+  for (const part of parts) for (const [k, v] of Object.entries(part)) if (v) all[k as keyof Options] = v
+  return all
 }
 
 export const useOptions = () => useResource(KEY, loadOptions)

@@ -3,8 +3,11 @@
 // labels ('game'); numbers are formatted here.
 import type { OptionEntry } from '../../reference/rf2-api'
 
-/** `tags`: extra words the settings search matches. */
-export type OptionDef = { tags?: string } & (
+/**
+ * `tags`: extra words the settings search matches. `disabledWhen`: the option does not apply while another
+ * option has that value (`value`) or any other value (`not`).
+ */
+export type OptionDef = { tags?: string; disabledWhen?: { key: OptionEntry; value?: number; not?: number; reason: string } } & (
   | { key: OptionEntry; label: string; help?: string; kind: 'toggle'; on?: number }
   | { key: OptionEntry; label: string; help?: string; kind: 'game' }
   | { key: OptionEntry; label: string; help?: string; kind: 'number'; format: (v: number) => string; step?: number; parse?: (text: string) => number }
@@ -12,17 +15,17 @@ export type OptionDef = { tags?: string } & (
 
 export type Section = { id: string; title: string; items: OptionDef[] }
 
-const pct = (v: number) => `${Math.round(v)} %`
-const pct01 = (v: number) => `${Math.round(v * 100)} %`
+export const pct = (v: number) => `${Math.round(v)} %`
+export const pct01 = (v: number) => `${Math.round(v * 100)} %`
 const mbps = (v: number) => `${(v / 1e6).toFixed(2)} Mbps`
-const toggle = (key: OptionEntry, label: string, help?: string): OptionDef => ({ key, label, help, kind: 'toggle' })
-const game = (key: OptionEntry, label: string, help?: string): OptionDef => ({ key, label, help, kind: 'game' })
+export const toggle = (key: OptionEntry, label: string, help?: string): OptionDef => ({ key, label, help, kind: 'toggle' })
+export const game = (key: OptionEntry, label: string, help?: string): OptionDef => ({ key, label, help, kind: 'game' })
 // typed-in values are in display units (70 → 0.70 for percentages shown from a 0–1 value)
 const PARSE = new Map<(v: number) => string, (text: string) => number>([
   [pct01, (t) => Number.parseFloat(t.replace(',', '.')) / 100],
   [mbps, (t) => Number.parseFloat(t.replace(',', '.')) * 1e6],
 ])
-const num = (key: OptionEntry, label: string, format: (v: number) => string, step?: number, help?: string): OptionDef => ({ key, label, help, kind: 'number', format, step, parse: PARSE.get(format) })
+export const num = (key: OptionEntry, label: string, format: (v: number) => string, step?: number, help?: string): OptionDef => ({ key, label, help, kind: 'number', format, step, parse: PARSE.get(format) })
 const volume = (key: OptionEntry, label: string): OptionDef => ({ ...num(key, label, pct01, 0.05), tags: 'volume sound' })
 
 export const SECTIONS: Section[] = [

@@ -60,8 +60,10 @@ export function ConfirmButton({
   size,
   variant = 'secondary',
   full,
+  disabled,
 }: {
   children: ReactNode
+  disabled?: boolean
   question: string
   confirmLabel: string
   onConfirm: () => void
@@ -82,7 +84,7 @@ export function ConfirmButton({
   if (!open) {
     return (
       <span ref={box} className={styles.confirm}>
-      <Button size={size} variant={variant} full={full} onClick={() => setOpen(true)} navId="confirm-open">
+      <Button size={size} variant={variant} full={full} disabled={disabled} onClick={() => setOpen(true)} navId="confirm-open">
         {children}
       </Button>
       </span>
@@ -94,7 +96,14 @@ export function ConfirmButton({
       <Button size={size} onClick={() => setOpen(false)}>
         Cancel
       </Button>
-      <Button size={size} variant="danger" onClick={onConfirm}>
+      <Button
+        size={size}
+        variant="danger"
+        onClick={() => {
+          setOpen(false)
+          onConfirm()
+        }}
+      >
         {confirmLabel}
       </Button>
     </span>

@@ -5,6 +5,7 @@ import { CarPicker } from './screens/CarPicker'
 import { Loading } from './screens/Loading'
 import { MainMenu, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
+import { Controls } from './screens/Controls'
 import { RaceSetup } from './screens/RaceSetup'
 import { Settings } from './screens/Settings'
 import { Fullscreen } from './screens/session/Fullscreen'
@@ -62,6 +63,7 @@ function EventApp() {
             <Route path="session" element={<Screen id="event/session"><SessionControls /></Screen>} />
             <Route path="results" element={<Screen id="event/results"><Results /></Screen>} />
             <Route path="settings" element={<Screen id="event/settings"><Settings /></Screen>} />
+            <Route path="settings/controls" element={<Screen id="event/controls"><Controls /></Screen>} />
           </Route>
           {/* native page MONITOR MAXIMIZED opens #/fullscreen */}
           <Route path="fullscreen" element={<Frame hole="full" hints={['select']}><Screen id="event/fullscreen"><Fullscreen /></Screen></Frame>} />
@@ -95,6 +97,7 @@ function StartApp() {
             <Route path="race/track" element={<Routed id="race/track" element={<TrackPicker />} />} />
             <Route path="race/opponents" element={<Routed id="race/opponents" element={<Opponents />} />} />
             <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
+            <Route path="settings/controls" element={<Routed id="settings/controls" element={<Controls />} />} />
             <Route path="stock/:area" element={<StockRoute />} />
           </Route>
           <Route path="loading" element={<Routed id="loading" frame="bare" element={<Loading />} />} />
