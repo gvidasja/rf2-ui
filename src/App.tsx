@@ -7,6 +7,7 @@ import { MainMenu, StockArea } from './screens/MainMenu'
 import { Opponents } from './screens/Opponents'
 import { Controls } from './screens/Controls'
 import { RaceSetup } from './screens/RaceSetup'
+import { Replays } from './screens/Replays'
 import { Settings } from './screens/Settings'
 import { Fullscreen } from './screens/session/Fullscreen'
 import { Garage } from './screens/session/Garage'
@@ -96,6 +97,7 @@ function StartApp() {
             <Route path="race/car" element={<Routed id="race/car" element={<CarPicker />} />} />
             <Route path="race/track" element={<Routed id="race/track" element={<TrackPicker />} />} />
             <Route path="race/opponents" element={<Routed id="race/opponents" element={<Opponents />} />} />
+            <Route path="replays" element={<Routed id="replays" element={<Replays />} />} />
             <Route path="settings" element={<Routed id="settings" element={<Settings />} />} />
             <Route path="settings/controls" element={<Routed id="settings/controls" element={<Controls />} />} />
             <Route path="stock/:area" element={<StockRoute />} />
@@ -123,13 +125,13 @@ function Routed({ id, element, frame }: { id: string; element: React.ReactNode; 
 }
 
 // areas with new screens; the rest still open the stock UI
-const OWN_AREAS = ['race', 'settings']
+const OWN_AREAS = ['race', 'replays', 'settings']
 
 function AreaFrame() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: profile } = useProfile()
-  const area = pathname.startsWith('/stock/') ? pathname.slice(7) : pathname.startsWith('/settings') ? 'settings' : 'race'
+  const area = pathname.startsWith('/stock/') ? pathname.slice(7) : (OWN_AREAS.find((a) => pathname.startsWith(`/${a}`)) ?? 'race')
   return (
     <Frame
       top={<TopBar tabs={AREAS} current={area} onTab={(id) => navigate(OWN_AREAS.includes(id) ? `/${id}` : `/stock/${id}`, { replace: true })} />}

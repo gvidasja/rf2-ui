@@ -21,7 +21,7 @@ export function MainMenu() {
     { id: 'race', label: 'Race', hint: sel?.track ? `${carModelName(sel)} · ${sel.track.shortName ?? ''}` : undefined, onOpen: () => navigate('/race') },
     stock('online', 'Online servers'),
     stock('competitions', 'Competitions'),
-    stock('replays', 'Replays'),
+    { id: 'replays', label: 'Replays', onOpen: () => navigate('/replays') },
     stock('content', 'Content'),
     { id: 'settings', label: 'Settings', onOpen: () => navigate('/settings') },
     stock('profile', 'Profile', profile?.nick ?? profile?.name),

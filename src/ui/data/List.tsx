@@ -86,14 +86,20 @@ export function DataTable<T>({
   rows,
   rowKey,
   isYou,
+  selectedKey,
   onRow,
+  onFocusRow,
   label,
 }: {
   columns: Column<T>[]
   rows: T[]
   rowKey: (row: T) => string
   isYou?: (row: T) => boolean
+  /** the row shown as chosen (e.g. the one whose details are open); it takes the screen's first focus */
+  selectedKey?: string
   onRow?: (row: T) => void
+  /** follow keyboard focus, e.g. to preview the focused row */
+  onFocusRow?: (row: T) => void
   label: string
 }) {
   return (
@@ -120,8 +126,11 @@ export function DataTable<T>({
               key={key}
               tabIndex={onRow ? 0 : undefined}
               data-nav-id={onRow ? `row-${key}` : undefined}
-              className={cx(onRow && styles.rowAction, isYou?.(r) && styles.you)}
+              data-autofocus={onRow && key === selectedKey ? true : undefined}
+              className={cx(onRow && styles.rowAction, (isYou?.(r) || key === selectedKey) && styles.you)}
+              aria-selected={selectedKey !== undefined ? key === selectedKey : undefined}
               onClick={onRow && (() => onRow(r))}
+              onFocus={onFocusRow && (() => onFocusRow(r))}
             >
               {columns.map((c) => (
                 <td key={c.key} className={cx(c.numeric && styles.num, c.muted && styles.muted)}>
